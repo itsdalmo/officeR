@@ -58,18 +58,6 @@ is.string <- function(x) {
   is.character(x) && length(x) == 1
 }
 
-# See if a numeric vactor contains fractions/decimals (i.e., not an integer) ---
-any_fractions <- function(x) {
-  num <- x%%1 != 0
-  any(num[!is.na(num)])
-}
-
-# Alternative with precision and comparable benchmark:
-# any_fractions <- function(x) {
-#   num <- abs(x - round(x)) > .Machine$double.eps^0.5
-#   any(num[!is.na(num)])
-# }
-
 # See if a list or data.frame contains any labelled vectors. -------------------
 any_labelled <- function(x) {
   any(vapply(x, inherits, what = "labelled", logical(1)))
