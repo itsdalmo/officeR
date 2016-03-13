@@ -12,14 +12,14 @@
 #' @examples
 #' x %>% to_clipboard()
 
-to_clipboard <- function(x, encoding = "") {
-
-  if ((Sys.info()["sysname"] == "Windows")) {
+write_clipboard <- function(x, ...) {
+  dots <- list(...)
+  if (on_windows()) {
     file <- "clipboard-128"
     if (object.size(x) > 120000) {
       stop("The data is too large to write to windows clipboard", call. = FALSE)
     }
-  } else if (Sys.info()["sysname"] == "Darwin") {
+  } else if (on_osx()) {
     file <- pipe("pbcopy", "w")
     on.exit(close(file), add = TRUE)
   } else {
@@ -29,14 +29,19 @@ to_clipboard <- function(x, encoding = "") {
   if (is.character(x)) {
     writeLines(x, file)
   } else {
-
-    cols <- if (is.data.frame(x)) TRUE else FALSE
-    utils::write.table(x = x, file = file, sep = "\t", na = "", dec = ",",
-                       row.names = FALSE, col.names = cols, fileEncoding = encoding)
-
+    args <- list(x = x, file = file, sep = "\t", na = "", dec = ",",
+                 row.names = FALSE, fileEncoding = "",
+                 col.names = is.data.frame(x))
+    args <- c(args, dots[setdiff(names(dots), c("x", "file"))])
+    args <- args[!duplicated(args, fromLast = TRUE)]
+    do.call(utils::write.table, args)
   }
 
 }
+
+#' @rdname write_clipboard
+#' @export
+to_clipboard <- write_clipboard
 
 #' Write common file formats
 #'
@@ -53,81 +58,100 @@ to_clipboard <- function(x, encoding = "") {
 #' @examples
 #' write_data(x, file = "test.xlsx")
 
-write_data <- function(x, file, ...) {
+write_data <- function(x, file, ..., delim = NULL) {
+  file <- clean_path(file)
+  UseMethod("write_data")
+}
 
-  # Gather dots
+write_data.data.frame <- function(x, file, ..., delim = NULL) {
   dots <- list(...)
 
-  # Get file information
-  file <- clean_path(file)
-  ext <- stri_trans_tolower(tools::file_ext(file))
-  name <- filename_no_ext(file)
-
-  # Convert matrix to data.frame
-  if (is.matrix(x)) x <- as_data_frame(x)
-
-  # Check if it is a survey and convert depending on output format
-  if (is.survey(x) && ext == "sav") {
-      x <- to_labelled(x)$df
-  } else if (is.survey(x) && ext == "xlsx") {
-    is_date <- vapply(x$df, inherits, what = "Date", logical(1))
-    x$df[is_date] <- lapply(x$df[is_date], as.character)
-    names(x) <- ordered_replace(names(x), default$structure$survey, default$structure$sheet)
-  } else if (is.data.frame(x)) {
-    if (ext %in% c("xlsx", "rdata")) {
-      x <- if ("sheet" %in% names(dots)) setNames(list(x), dots[["sheet"]]) else setNames(list(x), name)
-    }
-  } else if (!is.list(x)) {
-    stop("This function expects a matrix, data.frame, list or survey.", call. = FALSE)
+  # Excel/Rdata writer expects a named list as input
+  if ("sheet" %in% names(dots)) {
+    name <- dots$sheet
+  } else {
+    name <- filename_no_ext(file)
   }
 
-  # Only xlsx and rdata supports a list of output
-  supports_list <- ext %in% c("xlsx", "rdata")
-  if (is.list2(x) && !supports_list) {
-      stop("Use lapply to write lists that are not survey objects when output is not xlsx.", call. = FALSE)
-  }
-
-  # Use extension to write correct format
-  switch(ext,
+  switch(tolower(tools::file_ext(file)),
+         rdata = write_rdata(setNames(list(x), name), file),
+         xlsx = write_xlsx(setNames(list(x), name), file, dots),
          sav = write_spss(x, file),
-         rdata = write_rdata(x, file),
-         xlsx = write_xlsx(x, file, dots),
-         txt = write_flat(x, file, delim = "\t", dots),
-         tsv = write_flat(x, file, delim = "\t", dots),
-         csv = write_flat(x, file, delim = ",", dots),
+         txt = write_flat(x, file, delim = delim %||% "\t", dots),
+         tsv = write_flat(x, file, delim = delim %||% "\t", dots),
+         csv = write_flat(x, file, delim = delim %||% ",", dots),
          stop("Unrecognized output format: ", ext))
 
+  # Suppress printing
   invisible()
+}
+
+write_data.list <- function(x, file, ...) {
+  dots <- list(...)
+  ext <- tolower(tools::file_ext(file))
+  if (!ext %in% c("xlsx", "rdata")) {
+    stop("Lists can only be written to .xlsx or .Rdata files.")
+  }
+
+  # All list elements must be named
+  unnamed <- is.null(names(x)) || any(names(x) == "")
+  dupes <- duplicated(names(x))
+  if (unnamed) {
+    stop("All list elements must be named.")
+  } else if (any(dupes)) {
+    stop("List names should not contain duplicates.")
+  }
+
+  # The list should only contain data.frame/matrix
+  is_df <- vapply(x, is.data.frame, logical(1))
+  if (!all(is_df)) {
+    is_matrix <- vapply(x, is.matrix, logical(1))
+    if (!all(is_df | is_matrix)) {
+      stop("All list items must be a data.frame or matrix.")
+    }
+  }
+
+  switch(ext, rdata = write_rdata(x, file), xlsx = write_xlsx(x, file, dots))
+
+  # Suppress printing
+  invisible()
+}
+
+write_data.matrix <- function(x, file, ...) {
+  write_data(as.data.frame(x, stringsAsFactors = FALSE), file, ...)
+}
+
+write_data.character <- function(x, file, ...) {
+  # Use readr by default? Encoding?
 }
 
 # Output wrappers --------------------------------------------------------------
 
 write_spss <- function(data, file) {
+  if (!any_labelled(data)) warning("No labelled variables found in data.")
 
-  if (!is.spss(data)) {
-    warning("No labelled variables found.", call. = FALSE)
-  }
-
-  # BUG in ReadStat (long strings, > 256 characters)
+  # WORKAROUND: Haven/ReadStat cannot write strings that exceed 256 characters.
+  # read_/write_data works around this by writing columns to a separate .Rdata file,
+  # and truncating the strings itself before attempting to write - to avoid crashes.
   is_character <- vapply(data, is.character, logical(1))
-
   if (any(is_character)) {
-    strings <- vapply(data[is_character], function(x) max(stri_length(x), na.rm = TRUE) > 250, logical(1))
-    strings <- names(strings[strings])
+    is_long <- vapply(data[is_character], function(x) {
+      max(nchar(x, keepNA = TRUE), na.rm = TRUE) > 250  } , logical(1))
 
-    if (length(strings)) {
+    if (any(is_long)) {
+      columns <- names(data)[is_long]
       name <- filename_no_ext(file)
-      spath <- file.path(dirname(file), stri_c(name, " (long strings).Rdata"))
+      spath <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
-      # Add stringID to data
-      data$stringID <- 1:nrow(data)
+      # We need an ID to match against when reading in again.
+      data$string_id <- 1:nrow(data)
 
-      # Write strings separately and shorten in original data
-      write_rdata(list("x" = data[c(strings, "stringID")]), spath)
-      data[strings] <- lapply(data[strings], function(x) {
-        oa = attributes(x); x <- stri_sub(x, to = 250); attributes(x) <- oa; x
+      # Write the full-length strings separately and truncate in original data
+      write_rdata(list("x" = data[c(columns, "string_id")]), spath)
+      data[columns] <- lapply(data[columns], function(x) {
+        oa = attributes(x); x <- substr(x, 1L, 250L); attributes(x) <- oa; x
         })
-      warning("Found long strings (> 250) in data. Writing as separate Rdata.", call. = FALSE)
+      warning("Detected long strings (> 250) in data. Stored as standalone:\n", spath, call. = FALSE)
     }
 
   }
@@ -137,38 +161,44 @@ write_spss <- function(data, file) {
 }
 
 write_rdata <- function(data, file) {
-
   save(list = names(data), file = file, envir = list2env(data, parent = emptyenv()))
-
 }
 
 write_flat <- function(data, file, delim, dots) {
 
-  # Update standard args
+  # Update default args.
   args <- list(x = data, path = file, delim = delim)
-  args <- append(dots, args[!names(args) %in% names(dots)])
+  if (!is.null(dots)) {
+    name <- setdiff(names(dots), names(args))
+    args <- append(dots[name], args)
+  }
 
-  # Read the data
   do.call(readr::write_delim, args)
 
 }
 
 write_xlsx <- function(data, file, dots) {
-
-  # If the file exists, load and write to it
+  # Load workbook if it already exists. Create if not.
   if (file.exists(file)) {
     wb <- openxlsx::loadWorkbook(file)
   } else {
     wb <- openxlsx::createWorkbook()
   }
 
-  # Update standard args
-  args <- list(row = 1L, format_style = FALSE, format_values = FALSE, append = FALSE)
-  args <- append(dots[!names(dots) %in% "sheet"], args[!names(args) %in% names(dots)])
+  # Update default args. User should use to_excel if they want to
+  # change these defaults.
+  args <- list(title = NULL, format = FALSE, row = 1L, append = FALSE)
+  if (!is.null(dots)) {
+    name <- setdiff(names(dots), c(names(args), "sheet"))
+    args <- append(dots[name], args)
+  }
 
-  lapply(names(data), function(nm, x, wb) {
-    a <- list(df = x[[nm]], wb = wb, sheet = nm); a <- append(a, args)
-    do.call(to_sheet, a)}, data, wb)
+  # openxlsx Workbooks are mutable, so we don't have to assign results.
+  lapply(names(data), function(name) {
+    file_arg <- list(df = data[[name]], wb = wb, sheet = name)
+    all_args <- append(file_arg, args)
+    do.call(to_excel, all_args)
+    })
 
   openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
 

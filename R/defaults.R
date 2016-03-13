@@ -23,10 +23,10 @@ get_default <- function(string, exact = TRUE) {
     stop("Expecting a string (character(1)) input for argument 'string'.")
   }
 
-  id <- stri_detect(names(internal_defaults), fixed = string, ignore_case = TRUE)
+  id <- grepl(string, names(internal_defaults), ignore.case = TRUE)
   id <- names(internal_defaults)[id]
   if (length(id) > 1L && exact) {
-    stop("The string matched more than one element:\n", join_str(stri_c("'", id, "'")))
+    stop("The string matched more than one element:\n", join_str(paste0("'", id, "'")))
   }
 
   res <- internal_defaults[id]
@@ -36,14 +36,6 @@ get_default <- function(string, exact = TRUE) {
   res
 
 }
-
-#' @rdname get_default
-#' @export
-default_palette <- function() get_default("palette", exact = TRUE)
-
-#' @rdname get_default
-#' @export
-default_latents <- function() get_default("latents", exact = TRUE)
 
 # Default values ---------------------------------------------------------------
 

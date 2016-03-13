@@ -5,7 +5,7 @@
 #' and then converts it to a data.frame.
 #'
 #' @param sep The delimiter for columns.
-#' @param header Default assumes the data contains headers. Set to \code{FALSE} if not.
+#' @param ... Further arguments passed to \code{readr::read_delim}.
 #' @author Kristian D. Olsen
 #' @note This function only works on Windows or OSX, and the data-size cannot
 #' exceed 128kb in Windows.
@@ -15,7 +15,7 @@
 #' x <- from_clipboard()
 #' }
 
-from_clipboard <- function(sep = "\t", header = TRUE) {
+read_clipboard <- function(sep = "\t", ...) {
 
   if (on_windows()) {
     file <- "clipboard-128"
@@ -29,19 +29,23 @@ from_clipboard <- function(sep = "\t", header = TRUE) {
   # Read lines
   lines <- suppressWarnings(readLines(file))
 
-  # Workaround for OS X
+  # OSX sometimes returns multiple split lines
   if (length(lines) != 1L) {
-    lines <- stri_c(lines, collapse = "\n")
+    lines <- paste0(lines, collapse = "\n")
   }
 
   # Check if any of the lines contain the sep
-  if (any(stri_detect(lines, regex = stri_c("[", sep, "]")))) {
-    lines <- readr::read_delim(lines, delim = sep)
+  if (any(grepl(paste0("[", sep, "]"), lines))) {
+    lines <- readr::read_delim(lines, delim = sep, ...)
   }
 
   return(lines)
 
 }
+
+#' @rdname read_clipboard
+#' @export
+from_clipboard <- read_clipboard
 
 #' Read common data formats
 #'
@@ -62,7 +66,7 @@ from_clipboard <- function(sep = "\t", header = TRUE) {
 #' @examples
 #' x <- read_data(system.file("extdata", "sample.sav", package = "reporttoolDT"))
 
-read_data <- function(file, ..., encoding = "UTF-8", decimal = ".") {
+read_data <- function(file, ..., delim = NULL, encoding = "UTF-8") {
 
   dots <- list(...)
   file <- clean_path(file)
@@ -71,15 +75,12 @@ read_data <- function(file, ..., encoding = "UTF-8", decimal = ".") {
     stop("Path does not exist:\n", file, call. = FALSE)
   }
 
-  # Locale and dots
-  loc <- readr::locale(encoding = encoding, decimal_mark = decimal)
-
   # Pick input-function based on extension
-  switch(stri_trans_tolower(tools::file_ext(file)),
+  switch(tolower(tools::file_ext(file)),
          sav = read_spss(file),
-         txt = read_flat(file, sep = "\t", loc, dots),
-         tsv = read_flat(file, sep = "\t", loc, dots),
-         csv = read_flat(file, sep = ",", loc, dots),
+         txt = read_flat(file, delim = delim %||% "\t", encoding, dots),
+         tsv = read_flat(file, delim = delim %||% "\t", encoding, dots),
+         csv = read_flat(file, delim = delim %||% ",", encoding, dots),
          xlsx = read_xlsx(file, dots),
          xls = read_xlsx(file, dots),
          rdata = read_rdata(file),
@@ -93,17 +94,17 @@ read_spss <- function(file) {
 
   x <- haven::read_sav(file)
 
-  # BUG in ReadStat (long strings, > 256 characters)
+  # WORKAROUND: See explanation for this under write_spss.
   name <- filename_no_ext(file)
-  strings <- file.path(dirname(file), stri_c(name, " (long strings).Rdata"))
+  sfile <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
-  if (file.exists(strings)) {
-    strings <- as.data.frame(read_data(strings))
-    rows <- match(x$stringID, strings$stringID)
+  if (file.exists(sfile)) {
+    strings <- as.data.frame(read_data(sfile))
+    rows <- match(x$string_id, strings$string_id)
     vars <- intersect(names(strings), names(x))
 
     x[vars] <- Map(function(d, a) { attr(d, "label") <- attr(a, "label"); d }, strings[rows, vars], x[vars])
-    x$stringID <- NULL # Remove string ID when reading
+    x$string_id <- NULL # Remove string ID when reading
     warning("Found Rdata with long strings in same directory. Joined with data.", call. = FALSE)
   }
 
@@ -117,8 +118,6 @@ read_rdata <- function(file) {
   # Create an empty environment to load the rdata
   data <- new.env(parent = emptyenv())
   load(file, envir = data)
-
-  # Convert the environment to a list and lowercase names
   data <- as.list(data)
 
   # Return first element if only one exists
@@ -128,13 +127,17 @@ read_rdata <- function(file) {
 
 }
 
-read_flat <- function(file, sep, loc, dots) {
-
-  if (sep == ";") loc$decimal_mark <- ","
+read_flat <- function(file, delim, encoding, dots) {
+  # readr expects a locale
+  dec <- if (delim != ";") "." else ","
+  loc <- readr::locale(encoding = encoding, decimal_mark = dec)
 
   # Update standard args
-  args <- list(file = file, delim = sep, locale = loc)
-  args <- append(dots, args[!names(args) %in% names(dots)])
+  args <- list(file = file, delim = delim, locale = loc)
+  if (!is.null(dots)) {
+    name <- setdiff(names(dots), names(args))
+    args <- append(dots[name], args)
+  }
 
   # Read the data
   do.call(readr::read_delim, args)
