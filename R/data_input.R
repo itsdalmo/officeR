@@ -4,7 +4,7 @@
 #' The function first reads in the lines, checks if the delimiter is present in the lines
 #' and then converts it to a data.frame.
 #'
-#' @param sep The delimiter for columns.
+#' @param delim The delimiter for columns.
 #' @param ... Further arguments passed to \code{readr::read_delim}.
 #' @author Kristian D. Olsen
 #' @note This function only works on Windows or OSX, and the data-size cannot
@@ -12,7 +12,14 @@
 #' @export
 #' @examples
 #' \dontrun{
+#' # Only works on Windows and OSX
+#' df <- data.frame("String" = c("A", "B"), "Int" = c(1:2L), "Percent" = c(0.5, 0.75))
+#' to_clipboard(df)
 #' x <- from_clipboard()
+#'
+#' # All equal - except attributes
+#' # (readr attaches attr "problems")
+#' all.equal(x, df, check.attributes = FALSE)
 #' }
 
 read_clipboard <- function(delim = "\t", ...) {
@@ -54,18 +61,21 @@ from_clipboard <- read_clipboard
 #' csv, csv2 and xlsx. Under the hood, it uses \code{readxl}, \code{readr} and
 #' \code{haven}.
 #'
-#' @param file Path to a Rdata, sav (SPSS), txt, csv, csv2 or xlsx file.
+#' @param file Path to a file with a supported extension.
 #' @param ... Additional arguments passed to \code{readxl} and \code{readr}. For
 #' instance you can use \code{sheet} to specify a xlsx sheet when reading.
-#' @param encoding The encoding to use for txt and csv-files.
-#' @param decimal The decimal marker in the file. Typically "," in scandinavia,
-#' and "." in the U.S.
+#' @param delim The deliminator used for flat files.
+#' @param encoding The current encoding for the file. Defaults to \code{UTF-8}.
 #' @author Kristian D. Olsen
 #' @return A data.frame. If more than one sheet is read from a xlsx file
 #' (or you are reading a Rdata file) a list is returned instead.
 #' @export
 #' @examples
-#' x <- read_data(system.file("extdata", "sample.sav", package = "reporttoolDT"))
+#' \dontrun{
+#' df <- data.frame("String" = c("A", "B"), "Int" = c(1:2L), "Percent" = c(0.5, 0.75))
+#' write_data(df, file = "example data.xlsx")
+#' read_data(df, file = "example data.xlsx")
+#' }
 
 read_data <- function(file, ..., delim = NULL, encoding = "UTF-8") {
 

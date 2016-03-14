@@ -4,13 +4,17 @@
 #' scandinavian locale.
 #'
 #' @param x The data or text to write.
-#' @param encoding The encoding to use when writing.
+#' @param ... Further arguments passed to \code{write.table}.
 #' @author Kristian D. Olsen
 #' @note This function only works on Windows or OSX, and the data-size cannot
 #' exceed 128kb in Windows.
 #' @export
 #' @examples
-#' x %>% to_clipboard()
+#' \dontrun{
+#' # Only works on Windows and OSX
+#' df <- data.frame("String" = c("A", "B"), "Int" = c(1:2L), "Percent" = c(0.5, 0.75))
+#' to_clipboard(df)
+#' }
 
 write_clipboard <- function(x, ...) {
   dots <- list(...)
@@ -56,12 +60,16 @@ to_clipboard <- write_clipboard
 #' (which in turn uses \code{openxlsx}).
 #'
 #' @param x The data to be written. (\code{data.frame}, \code{list} or \code{survey}).
-#' @param file Path.
+#' @param file Path and filename of output.
+#' @param ... Further arguments passed to \code{readr}, \code{openxlsx} or \code{haven}.
 #' @author Kristian D. Olsen
 #' @note Use \code{lapply} to write a list of data to flat files (csv, txt etc).
 #' @export
 #' @examples
-#' write_data(x, file = "test.xlsx")
+#' \dontrun{
+#' df <- data.frame("String" = c("A", "B"), "Int" = c(1:2L), "Percent" = c(0.5, 0.75))
+#' write_data(df, file = "example data.csv")
+#' }
 
 write_data <- function(x, file, ..., delim = NULL) {
   file <- clean_path(file)
@@ -120,6 +128,19 @@ write_data.list <- function(x, file, ...) {
 
   # Suppress printing
   invisible()
+}
+
+write_data.Workbook <- function(x, file, ...) {
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+    stop("Package 'openxlsx' required to write .xlsx files.")
+  }
+  # Make sure it is a openxlsx workbook.
+  openxlsx_wb <- identical(attr(class(x), "package"), "openxlsx")
+  if (!openxlsx_wb) {
+    stop("Unknown type of 'workbook'.")
+  }
+  openxlsx::saveWorkbook(x, file, ...)
+
 }
 
 write_data.matrix <- function(x, file, ...) {
