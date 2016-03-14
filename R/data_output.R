@@ -29,11 +29,16 @@ write_clipboard <- function(x, ...) {
   if (is.character(x)) {
     writeLines(x, file)
   } else {
-    args <- list(x = x, file = file, sep = "\t", na = "", dec = ",",
-                 row.names = FALSE, fileEncoding = "",
-                 col.names = is.data.frame(x))
-    args <- c(args, dots[setdiff(names(dots), c("x", "file"))])
-    args <- args[!duplicated(args, fromLast = TRUE)]
+    args <- list(
+      x = x, file = file, sep = "\t", na = "", dec = ",",
+      row.names = FALSE, fileEncoding = "", col.names = is.data.frame(x))
+
+    # User arguments
+    if (!is.null(dots)) {
+      args <- c(args, dots[setdiff(names(dots), c("x", "file"))])
+      args <- args[!duplicated(args, fromLast = TRUE)]
+    }
+
     do.call(utils::write.table, args)
   }
 

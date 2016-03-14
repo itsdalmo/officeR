@@ -15,8 +15,8 @@
 #' x <- from_clipboard()
 #' }
 
-read_clipboard <- function(sep = "\t", ...) {
-
+read_clipboard <- function(delim = "\t", ...) {
+  dots <- list(...)
   if (on_windows()) {
     file <- "clipboard-128"
   } else if (on_osx()) {
@@ -26,17 +26,18 @@ read_clipboard <- function(sep = "\t", ...) {
     stop("Writing to clipboard is supported only in Windows or OSX")
   }
 
-  # Read lines
+  # Read lines and convert input to UTF-8.
   lines <- suppressWarnings(readLines(file))
+  lines <- iconv(lines, from = "", to = "UTF-8")
 
-  # OSX sometimes returns multiple split lines
+  # Can return multiple lines.
   if (length(lines) != 1L) {
     lines <- paste0(lines, collapse = "\n")
   }
 
   # Check if any of the lines contain the sep
-  if (any(grepl(paste0("[", sep, "]"), lines))) {
-    lines <- readr::read_delim(lines, delim = sep, ...)
+  if (any(grepl(paste0("[", delim, "]"), lines))) {
+    lines <- readr::read_delim(lines, delim = delim, ...)
   }
 
   return(lines)

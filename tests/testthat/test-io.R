@@ -18,7 +18,7 @@ test_that("Read/write single-sheet-xlsx" , {
 
 })
 
-test_that("Writing tables to xlsx with to_sheet" , {
+test_that("Writing tables to xlsx with to_excel" , {
 
   # Read
   xlsx <- read_data("xlsx.xlsx")
@@ -28,7 +28,7 @@ test_that("Writing tables to xlsx with to_sheet" , {
   wb <- openxlsx::createWorkbook()
 
   # Add table and save
-  to_sheet(xlsx, wb, title = "Table", sheet = "analysis")
+  to_excel(xlsx, wb, title = "Table", sheet = "analysis")
   openxlsx::saveWorkbook(wb, fileName)
 
   # Read data again
@@ -47,7 +47,7 @@ test_that("Writing tables to xlsx with to_sheet" , {
 
 test_that("Tables with to_clipboard and from_clipboard for Windows/OSX" , {
 
-  if (Sys.info()["sysname"] %in% c("Windows", "Darwin")) {
+  if (on_windows() || on_osx()) {
 
     # Read file and write it to clipboard
     xlsx <- read_data("xlsx.xlsx")
@@ -66,7 +66,7 @@ test_that("Tables with to_clipboard and from_clipboard for Windows/OSX" , {
 
 test_that("Text with to_clipboard and from_clipboard for Windows/OSX" , {
 
-  if (Sys.info()["sysname"] %in% c("Windows", "Darwin")) {
+  if (on_windows() || on_osx()) {
 
     # Read file and write it to clipboard
     txt <- "This is \n a test"
@@ -152,11 +152,11 @@ test_that("Read and write_data for .Rdata files", {
   csv2 <- read_data("csv2.csv", delim = ";")
   write_data(csv2, fileName)
 
-  rdata <- read_data("rdata.Rdata"); names(rdata)[4] <- "STRING"
+  rdata <- read_data("rdata.Rdata")
   w_rdata <- read_data(fileName)
 
   expect_identical(w_rdata, csv2)
-  expect_equal(w_rdata, rdata) # Encoding issues
+  expect_equal(w_rdata, rdata, check.attributes = FALSE) # readr "problems" from csv2.
 
   unlink(fileName, recursive = TRUE, force = TRUE)
 
@@ -164,14 +164,11 @@ test_that("Read and write_data for .Rdata files", {
 
 test_that("Read and write_data for .sav files", {
 
-  sav <- haven::read_sav(system.file("extdata", "sample.sav", package = "reporttoolDT"))
+  sav <- haven::read_sav("sav.sav")
   xlsx <- read_data("xlsx.xlsx")
 
   sav$missing[1:2] <- NA # sav recodes NA to ""
   expect_identical(sav, xlsx)
-
-  sav_mm <- from_labelled(sav)$mm
-  expect_identical(sav_mm$manifest, names(sav))
 
   fileName <- file.path(tempdir(), "sav.sav")
   write_data(sav, fileName)
