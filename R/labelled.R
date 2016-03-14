@@ -87,6 +87,7 @@ to_labelled.data.table <- function(x) {
   to_labelled(as.data.frame(x))
 }
 
+# Convert factors to a (integer based) labelled variable -----------------------
 as_labelled <- function(x) {
   stopifnot(is.factor(x))
   levels <- levels(x)
@@ -94,6 +95,7 @@ as_labelled <- function(x) {
   haven::labelled(as.integer(x), labels = labels, is_na = NULL)
 }
 
+# Strip the label attribute from a variable (after reading data with haven) ----
 strip_label <- function(x) {
   stopifnot(is.atomic(x))
   attr(x, "label") <- NULL
