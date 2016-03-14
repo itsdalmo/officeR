@@ -5,7 +5,7 @@
 \title{Pass data to a excel workbook}
 \usage{
 to_excel(df, wb, title = " ", sheet = "tables", format = !is.null(title),
-  append = TRUE, row = 1L)
+  append = TRUE, row = 1L, col = 1L)
 }
 \arguments{
 \item{df}{A \code{data.frame}.}
@@ -22,7 +22,9 @@ want the table to be styled.}
 \item{append}{Whether or not the function should append or clean the
 sheet of existing data before writing.}
 
-\item{row}{Optional: Specify the startingrow when writing data to a new sheet.}
+\item{row}{Specify the startingrow when writing data to a new sheet.}
+
+\item{col}{Start column. Same as for row.}
 }
 \description{
 This function passes a \code{data.frame} to a openxlsx workbook.
@@ -36,10 +38,10 @@ if (require(openxlsx)) {
  df <- data.frame("String" = c("A", "B"), "Int" = c(1:2L), "Percent" = c(0.5, 0.75))
 
  # The workbook is mutable, so we don't have to assign result.
- to_sheet(df, wb, title = "Example data", sheet = "Example", append = FALSE)
+ to_excel(df, wb, title = "Example data", sheet = "Example", append = FALSE)
 
  # Data is first argument, so we can use it with dplyr.
- # df \%>\% to_sheet(wb, title = "Example dplyr", sheet = "Example", append = TRUE)
+ # df \%>\% to_excel(wb, title = "Example dplyr", sheet = "Example", append = TRUE)
 
  # Save the data
  write_data(wb, "Example tables.xlsx", overwrite = TRUE)

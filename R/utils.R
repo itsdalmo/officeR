@@ -10,6 +10,15 @@ capture_dots <- function(...) {
   eval(substitute(alist(...)))
 }
 
+# Check if a vector represents date or time ------------------------------------
+is_date <- function(x) {
+  inherits(x, c("POSIXct", "POSIXt", "Date"))
+}
+
+is_percent <- function(x) {
+  is.numeric(x) && all(x <= 1L & x >= 0L)
+}
+
 # Check which OS we are on -----------------------------------------------------
 on_windows <- function() {
   unname(Sys.info()["sysname"]) == "Windows"
