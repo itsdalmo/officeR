@@ -1,9 +1,9 @@
 context("Utility functions")
 
-test_that("join_str", {
-  expect_error(join_str(1))
-  expect_identical(join_str("A"), "A")
-  expect_identical(join_str(c("A", "B")), "A and B")
+test_that("str_list", {
+  expect_error(str_list(1))
+  expect_identical(str_list("A"), "'A'")
+  expect_identical(str_list(c("A", "B")), "'A' and 'B'")
 })
 
 test_that("get_default", {

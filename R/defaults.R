@@ -26,7 +26,7 @@ get_default <- function(string, exact = TRUE) {
   id <- grepl(string, names(internal_defaults), ignore.case = TRUE)
   id <- names(internal_defaults)[id]
   if (length(id) > 1L && exact) {
-    stop("The string matched more than one element:\n", join_str(paste0("'", id, "'")))
+    stop("The string matched more than one element:\n", str_list(id))
   }
 
   res <- internal_defaults[id]

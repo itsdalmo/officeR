@@ -116,7 +116,7 @@ read_spss <- function(file) {
 
     x[vars] <- Map(function(d, a) { attr(d, "label") <- attr(a, "label"); d }, strings[rows, vars], x[vars])
     x$string_id <- NULL # Remove string ID when reading
-    warning("Found Rdata with long strings in same directory. Joined with data.", call. = FALSE)
+    warning("Found Rdata with long strings in same directory. Joined with data.")
   }
 
   # Return

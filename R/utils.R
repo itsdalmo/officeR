@@ -1,22 +1,20 @@
-# TODO: Needs a better name. ---------------------------------------------------
-join_str <- function(x, conjunction = "and") {
+# Turn a character vector into a listing
+# E.g. Turn c("A", "B") into "A and B" -----------------------------------------
+str_list <- function(x, conjunction = "and", quote = "'") {
   stopifnot(is.character(x))
-  if (length(x) == 1L) return(x)
+  if (!is.null(quote)) {
+    # Pasting quotes because sQuote and dQuote depend on the useFancyQuotes option.
+    x <- paste0(quote, x, quote)
+  }
+  if (length(x) == 1L) {
+    return(x)
+  }
   paste(paste0(x[1:(length(x)-1)], collapse = ", "), conjunction, x[length(x)])
 }
 
 # Capture dots. Primarily used to pass calls to R6 methods ---------------------
 capture_dots <- function(...) {
   eval(substitute(alist(...)))
-}
-
-# Check if a vector represents date or time ------------------------------------
-is_date <- function(x) {
-  inherits(x, c("POSIXct", "POSIXt", "Date"))
-}
-
-is_percent <- function(x) {
-  is.numeric(x) && all(x <= 1L & x >= 0L)
 }
 
 # Check which OS we are on -----------------------------------------------------
@@ -54,6 +52,15 @@ clean_path <- function(path) {
 # Retrieve the filename sans extension -----------------------------------------
 filename_no_ext <- function(file)  {
   sub(paste0("(.*)\\.", tools::file_ext(file), "$"), "\\1", basename(file))
+}
+
+# Check if a vector represents date or time ------------------------------------
+is_date <- function(x) {
+  inherits(x, c("POSIXct", "POSIXt", "Date"))
+}
+
+is_percent <- function(x) {
+  is.numeric(x) && all(x <= 1L & x >= 0L)
 }
 
 # Check if x is a string (length 1 character vector.) --------------------------

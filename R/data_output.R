@@ -130,25 +130,32 @@ write_data.list <- function(x, file, ...) {
   invisible()
 }
 
+write_data.matrix <- function(x, file, ...) {
+  write_data(as.data.frame(x, stringsAsFactors = FALSE), file, ...)
+}
+
+write_data.table <- write_data.matrix
+
+write_data.character <- function(x, file, ...) {
+  # Use readr by default? Encoding?
+  stop("Work in progress. Not ready yet.")
+}
+
 write_data.Workbook <- function(x, file, ...) {
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    stop("Package 'openxlsx' required to write .xlsx files.")
-  }
-  # Make sure it is a openxlsx workbook.
-  openxlsx_wb <- identical(attr(class(x), "package"), "openxlsx")
-  if (!openxlsx_wb) {
+    stop("This function requires 'openxlsx'.")
+  } else if (!identical(attr(class(wb), "package"), "openxlsx")) {
     stop("Unknown type of 'workbook'.")
   }
   openxlsx::saveWorkbook(x, file, ...)
 
 }
 
-write_data.matrix <- function(x, file, ...) {
-  write_data(as.data.frame(x, stringsAsFactors = FALSE), file, ...)
-}
-
-write_data.character <- function(x, file, ...) {
-  # Use readr by default? Encoding?
+write_data.pptWorkbook <- function(x, file, ...) {
+  if (!requireNamespace("ReporteRs")) {
+    stop("'ReporteRs' required to write pptWorkbook.")
+  }
+  ReporteRs::writeDoc(x$obj, file = file)
 }
 
 # Output wrappers --------------------------------------------------------------
