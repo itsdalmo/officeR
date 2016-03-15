@@ -12,11 +12,6 @@ str_list <- function(x, conjunction = "and", quote = "'") {
   paste(paste0(x[1:(length(x)-1)], collapse = ", "), conjunction, x[length(x)])
 }
 
-# Capture dots. Primarily used to pass calls to R6 methods ---------------------
-capture_dots <- function(...) {
-  eval(substitute(alist(...)))
-}
-
 # Check which OS we are on -----------------------------------------------------
 on_windows <- function() {
   unname(Sys.info()["sysname"]) == "Windows"

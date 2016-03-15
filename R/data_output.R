@@ -56,10 +56,11 @@ to_clipboard <- write_clipboard
 #'
 #' A simple wrapper for writing common data formats. The format is determined
 #' by the extension given in \code{file}. Flat files are written with \code{readr},
-#' and the encoding is always \code{UTF-8}. For xlsx, the function uses \code{to_sheet}
+#' and the encoding is always \code{UTF-8}. For xlsx, the function uses \code{to_excel}
 #' (which in turn uses \code{openxlsx}).
 #'
 #' @param x The data to be written. (\code{data.frame}, \code{list} or \code{survey}).
+#' \code{matrix} and \code{table} will be coerced to a \code{data.frame}.
 #' @param file Path and filename of output.
 #' @param ... Further arguments passed to \code{readr}, \code{openxlsx} or \code{haven}.
 #' @author Kristian D. Olsen

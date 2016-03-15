@@ -18,24 +18,26 @@
 #' @param font Default font (Replaces the \code{ReporteRs-default-font} option).
 #' @param fontsize Default fontsize (Replaces the \code{ReporteRs-fontsize} option).
 #' @author Kristian D. Olsen
-#' @note This function requires \code{openxlsx}.
+#' @note This function requires \code{ReporteRs}. The \code{pptWorkbook} object
+#' is a thin R6 wrapper around ReporteR's \code{pptx}, and allow us to use
+#' \code{to_ppt} in chained expressions, since the workbook is mutable.
 #' @export
 #' @examples
-#' if (require(openxlsx)) {
-#'  wb <- excel_workbook()
+#' if (require(ReporteRs)) {
+#'  wb <- ppt_workbook()
 #'  df <- data.frame("String" = c("A", "B"), "Int" = c(1:2L), "Percent" = c(0.5, 0.75))
 #'
 #'  # The workbook is mutable, so we don't have to assign result.
-#'  to_excel(df, wb, title = "Example data", sheet = "Example", append = FALSE)
+#'  to_ppt(df, wb, title = "Example data", subtitle = "")
 #'
 #'  # Data is first argument, so we can use it with dplyr.
-#'  # df %>% to_excel(wb, title = "Example dplyr", sheet = "Example", append = TRUE)
+#'  # df %>% to_ppt(wb, title = "Example data", subtitle = "")
 #'
 #'  # Save the data
-#'  write_data(wb, "Example table.xlsx", overwrite = TRUE)
+#'  write_data(wb, "Example table.pptx")
 #' }
 
-to_ppt <- function(x, wb, title = " ", subtitle = " ") {
+to_ppt <- function(x, wb, title = NULL, subtitle = NULL) {
   if (!requireNamespace("ReporteRs")) {
     stop("This function requires 'ReporteRs'.")
   } else if (!inherits(wb, "pptWorkbook")) {
@@ -56,8 +58,8 @@ ppt_workbook <- function(template = NULL, font = "Calibri", fontsize = 10L) {
 
 #' @rdname to_ppt
 #' @export
-to_ppt.data.frame <- function(x, wb, title = " ", subtitle = " ") {
-  wb$add_table(x, title, subtitle)
+to_ppt.data.frame <- function(x, wb, title = NULL, subtitle = NULL) {
+  wb$add_table(format_flextable(x), title %||% " ", subtitle %||% " ")
 }
 
 to_ppt.matrix <- function(x, wb, ...) {
@@ -66,6 +68,28 @@ to_ppt.matrix <- function(x, wb, ...) {
 }
 
 to_ppt.table <- to_ppt.matrix
+
+#' @rdname to_ppt
+#' @export
+to_ppt.FlexTable <- function(x, wb, title = NULL, subtitle = NULL) {
+  wb$add_table(x, title %||% " ", subtitle %||% " ")
+}
+
+#' @rdname to_ppt
+#' @export
+to_ppt.ggplot <- function(x, wb, title = NULL, subtitle = NULL) {
+  wb$add_plot(x, title %||% " ", subtitle %||% " ")
+}
+
+# Plots returned by evaluate::evaluate().
+to_ppt.recodedplot <- to_ppt.ggplot
+
+#' @rdname to_ppt
+#' @export
+to_ppt.character <- function(x, wb, title = NULL, subtitle = NULL) {
+  stopifnot(is.string(x))
+  wb$add_markdown(x, title %||% " ", subtitle %||% " ")
+}
 
 # Workbook for powerpoint (R6 Class) -------------------------------------------
 # This exists because ReporteRs does not use a mutable object for documents,
@@ -86,7 +110,23 @@ pptWorkbook <- R6::R6Class("pptWorkbook",
     add_table = function(x, title, subtitle) {
       self$obj <- ReporteRs::addSlide(self$obj, slide.layout = "Title and Content")
       self$obj <- ReporteRs::addTitle(self$obj, title)
-      self$obj <- ReporteRs::addFlexTable(self$obj, format_flextable(x))
+      self$obj <- ReporteRs::addFlexTable(self$obj, x)
+      self$obj <- ReporteRs::addParagraph(self$obj, subtitle)
+      invisible(self)
+    },
+
+    add_plot = function(x, title, subtitle) {
+      self$obj <- ReporteRs::addSlide(self$obj, slide.layout = 'Title and Content')
+      self$obj <- ReporteRs::addTitle(self$obj, title)
+      self$obj <- ReporteRs::addPlot(self$obj, fun = print, x = x, bg = "transparent")
+      self$obj <- ReporteRs::addParagraph(self$obj, subtitle)
+      invisible(self)
+    },
+
+    add_markdown = function(x, title, subtitle) {
+      self$obj <- ReporteRs::addSlide(self$obj, slide.layout = 'Title and Content')
+      self$obj <- ReporteRs::addTitle(self$obj, title)
+      self$obj <- ReporteRs::addMarkdown(self$obj, text = x)
       self$obj <- ReporteRs::addParagraph(self$obj, subtitle)
       invisible(self)
     },

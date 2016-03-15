@@ -3,14 +3,23 @@
 \name{to_ppt}
 \alias{ppt_workbook}
 \alias{to_ppt}
+\alias{to_ppt.FlexTable}
+\alias{to_ppt.character}
 \alias{to_ppt.data.frame}
+\alias{to_ppt.ggplot}
 \title{Pass data to Powerpoint workbooks}
 \usage{
-to_ppt(x, wb, title = " ", subtitle = " ")
+to_ppt(x, wb, title = NULL, subtitle = NULL)
 
 ppt_workbook(template = NULL, font = "Calibri", fontsize = 10L)
 
-\method{to_ppt}{data.frame}(x, wb, title = " ", subtitle = " ")
+\method{to_ppt}{data.frame}(x, wb, title = NULL, subtitle = NULL)
+
+\method{to_ppt}{FlexTable}(x, wb, title = NULL, subtitle = NULL)
+
+\method{to_ppt}{ggplot}(x, wb, title = NULL, subtitle = NULL)
+
+\method{to_ppt}{character}(x, wb, title = NULL, subtitle = NULL)
 }
 \arguments{
 \item{x}{A \code{data.frame}, \code{string} or \code{plot}}
@@ -40,21 +49,23 @@ You can use this function to pass \code{plot}, \code{data.frame} (\code{table} a
 Strings are assumed to be markdown.
 }
 \note{
-This function requires \code{openxlsx}.
+This function requires \code{ReporteRs}. The \code{pptWorkbook} object
+is a thin R6 wrapper around ReporteR's \code{pptx}, and allow us to use
+\code{to_ppt} in chained expressions, since the workbook is mutable.
 }
 \examples{
-if (require(openxlsx)) {
- wb <- excel_workbook()
+if (require(ReporteRs)) {
+ wb <- ppt_workbook()
  df <- data.frame("String" = c("A", "B"), "Int" = c(1:2L), "Percent" = c(0.5, 0.75))
 
  # The workbook is mutable, so we don't have to assign result.
- to_excel(df, wb, title = "Example data", sheet = "Example", append = FALSE)
+ to_ppt(df, wb, title = "Example data", subtitle = "")
 
  # Data is first argument, so we can use it with dplyr.
- # df \%>\% to_excel(wb, title = "Example dplyr", sheet = "Example", append = TRUE)
+ # df \%>\% to_ppt(wb, title = "Example data", subtitle = "")
 
  # Save the data
- write_data(wb, "Example table.xlsx", overwrite = TRUE)
+ write_data(wb, "Example table.pptx")
 }
 }
 \author{

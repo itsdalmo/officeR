@@ -7,7 +7,8 @@
 write_data(x, file, ..., delim = NULL)
 }
 \arguments{
-\item{x}{The data to be written. (\code{data.frame}, \code{list} or \code{survey}).}
+\item{x}{The data to be written. (\code{data.frame}, \code{list} or \code{survey}).
+\code{matrix} and \code{table} will be coerced to a \code{data.frame}.}
 
 \item{file}{Path and filename of output.}
 
@@ -16,7 +17,7 @@ write_data(x, file, ..., delim = NULL)
 \description{
 A simple wrapper for writing common data formats. The format is determined
 by the extension given in \code{file}. Flat files are written with \code{readr},
-and the encoding is always \code{UTF-8}. For xlsx, the function uses \code{to_sheet}
+and the encoding is always \code{UTF-8}. For xlsx, the function uses \code{to_excel}
 (which in turn uses \code{openxlsx}).
 }
 \note{
