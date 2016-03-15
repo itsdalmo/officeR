@@ -77,15 +77,12 @@ from_clipboard <- read_clipboard
 #' read_data(df, file = "example data.xlsx")
 #' }
 
-read_data <- function(file, ..., delim = NULL, encoding = "UTF-8") {
+read_data <- function(file, ...) UseMethod("read_data")
 
+read_data.default <- function(file, ..., delim = NULL, encoding = "UTF-8") {
   dots <- list(...)
   file <- clean_path(file)
-
-  if (!file.exists(file)) {
-    stop("Path does not exist:\n", file, call. = FALSE)
-  }
-
+  if (!file.exists(file)) stop("Path does not exist:\n", file)
   # Pick input-function based on extension
   switch(tolower(tools::file_ext(file)),
          sav = read_spss(file),
@@ -98,11 +95,9 @@ read_data <- function(file, ..., delim = NULL, encoding = "UTF-8") {
          stop("Unrecognized input format in:\n", file, call. = FALSE))
 }
 
-
 # Input wrappers ---------------------------------------------------------------
 
 read_spss <- function(file) {
-
   x <- haven::read_sav(file)
 
   # WORKAROUND: See explanation for this under write_spss.

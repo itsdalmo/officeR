@@ -4,7 +4,7 @@
 \alias{read_data}
 \title{Read common data formats}
 \usage{
-read_data(file, ..., delim = NULL, encoding = "UTF-8")
+read_data(file, ...)
 }
 \arguments{
 \item{file}{Path to a file with a supported extension.}

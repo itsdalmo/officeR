@@ -1,3 +1,22 @@
+# Convert http links into a sharepoint link on windows -------------------------
+as_network_drive <- function(link) {
+  if (!on_windows()) {
+    warning("This function only returns a path for network drives on Windows.")
+  }
+  is_url <- grep("^https?://.*[^/]\\.[a-z]+/.*", link, ignore.case = TRUE)
+  if (!is_url) {
+    stop("Input was not a URL:\n", link, "\n(Make sure to include http://).")
+  }
+
+  # Extract the domain and folder
+  domain <- sub("^https?://(.[^/]*)/.*", "\\1", link)
+  folder <- sub(paste0(".*", domain, "(.*)"), "\\1", link)
+
+  # Return
+  paste0("\\\\", domain, "@SSL/DavWWWRoot", folder)
+
+}
+
 # Turn a character vector into a listing
 # E.g. Turn c("A", "B") into "A and B" -----------------------------------------
 str_list <- function(x, conjunction = "and", quote = "'") {
