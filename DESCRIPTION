@@ -14,8 +14,10 @@ Imports:
     R6,
     readr,
     readxl,
+    tools,
     utils
 Suggests:
+    ggplot2,
     httr,
     openxlsx,
     testthat,

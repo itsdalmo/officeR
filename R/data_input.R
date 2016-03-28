@@ -158,7 +158,7 @@ read_xlsx <- function(file, dots) {
   if (!is.null(dots) && "sheet" %in% names(dots)) {
     sheet <- dots$sheet
     if (is.character(sheet)) {
-      sheet <- wb[stri_trans_tolower(wb) %in% stri_trans_tolower(sheet)]
+      sheet <- wb[tolower(wb) %in% tolower(sheet)]
     } else if (is.numeric(sheet) || is.integer(sheet)) {
       sheet <- wb[sheet]
     }

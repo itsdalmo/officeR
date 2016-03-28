@@ -25,17 +25,16 @@
 sharepoint_link <- function(link, mounted = FALSE) {
   if (!is.string(link)) stop("'link' must be a string (character(1).")
 
-  # If we are on windows, check if the drive is mounted.
+  # Use mounted drives if they exist.
   if (on_windows() && mounted) {
     drive <- as_network_drive(link)
     if (file.exists(drive)) {
-      link <- structure(drive, class = c("mounted_sharepoint", class(link)))
+      link <- structure(drive, class = c("sharepoint_mount", class(link)))
     }
   } else {
     if (!requireNamespace("httr")) {
       stop("'httr' is required for reading from sharepoint.")
     }
-    # URL encode the link if not.
     link <- structure(URLencode(link), class = c("sharepoint", class(link)))
   }
   link
@@ -65,26 +64,26 @@ read_data.sharepoint <- function(x, destination = NULL, ...) {
     httr:::set_envvar("sp_pwd", pwd, "session")
   }
 
-  # Encode URL string and GET
-  resp <- httr::GET(x, httr::authenticate(usr, pwd, type = "ntlm"), httr::write_disk(destination))
-  code <- httr::status_code(test)
+  # Check SP version
+  sp10 <- httr::modify_url(x, path = "_vti_bin/ListData.svc/")
+  sp10 <- httr::GET(sp10, httr::authenticate(usr, pwd, type = "ntlm"))
 
-  if (code == 200L) {
-    # Success. Return the data.
-    read_data(destination, ...)
-  } else if (code == 401L) {
-    stop("Unauthorized (401): Wrong username and/or password (or authentication).")
-  } else if (code == 400L) {
-    stop("Bad request (400): Something wrong with the function.")
-  } else if (code == 404L) {
-    stop("Not found (404): File does not exist.")
-  } else {
-    stop("Something went wrong. Status code: ", code)
+  if (httr::status_code(sp10) == 200) {
+    if (tools::file_ext(x) == "") {
+      stop("Cannot read directories. Sharepoint 2010 does not support REST.")
+    }
   }
+
+  # GET and check status
+  resp <- httr::GET(x, httr::authenticate(usr, pwd, type = "ntlm"), httr::write_disk(destination))
+  httr::stop_for_status(resp)
+
+  # Read data
+  read_data(destination, ...)
 
 }
 
 #' @rdname sharepoint_link
-read_data.mounted_sharepoint <- function(x, ...) {
+read_data.sharepoint_mount <- function(x, ...) {
   read_data(x, ...)
 }

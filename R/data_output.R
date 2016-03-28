@@ -145,7 +145,7 @@ write_data.character <- function(x, file, ...) {
 write_data.Workbook <- function(x, file, ...) {
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
     stop("This function requires 'openxlsx'.")
-  } else if (!identical(attr(class(wb), "package"), "openxlsx")) {
+  } else if (!identical(attr(class(x), "package"), "openxlsx")) {
     stop("Unknown type of 'workbook'.")
   }
   openxlsx::saveWorkbook(x, file, ...)
@@ -157,6 +157,14 @@ write_data.pptWorkbook <- function(x, file, ...) {
     stop("'ReporteRs' required to write pptWorkbook.")
   }
   ReporteRs::writeDoc(x$obj, file = file)
+}
+
+# Write ggplots ----------------------------------------------------------------
+write_data.ggplot <- function(x, file, ...) {
+  if (!requireNamespace("ggplot2")) {
+    stop("'ggplot2' required to write plots.")
+  }
+  ggplot2::ggsave(filename = file, plot = x, ...)
 }
 
 # Output wrappers --------------------------------------------------------------
