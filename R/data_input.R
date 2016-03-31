@@ -103,7 +103,7 @@ read_spss <- function(file) {
   x <- haven::read_sav(file)
 
   # WORKAROUND: See explanation for this under write_spss.
-  name <- filename_no_ext(file)
+  name <- basename_sans_ext(file)
   sfile <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
   if (file.exists(sfile)) {
