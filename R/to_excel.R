@@ -60,9 +60,9 @@ to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
                                 format = !is.null(title), append = TRUE, row = 1L, col = 1L) {
 
   # Check input
-  if (!is.string(sheet)) {
+  if (!is_string(sheet)) {
     stop("The sheet has to be a string (character(1)).")
-  } else if (!is.null(title) && !is.string(title)) {
+  } else if (!is.null(title) && !is_string(title)) {
     stop("Title has to be either NULL or a string.")
   } else if (!is.integer(row) || !is.integer(col)) {
     stop("'row' and 'col' must be an integer.")

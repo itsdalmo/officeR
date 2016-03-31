@@ -21,6 +21,12 @@ of class \code{labelled}. This function extracts the labels and attaches them
 as an attribute (by the same name) to the data, and converts any \code{labelled}
 variables into factors.
 }
+\note{
+\code{data.table} input will return a \code{data.frame}.
+}
+\examples{
+# TODO
+}
 \author{
 Kristian D. Olsen
 }

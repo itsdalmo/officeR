@@ -87,7 +87,7 @@ to_ppt.recodedplot <- to_ppt.ggplot
 #' @rdname to_ppt
 #' @export
 to_ppt.character <- function(x, wb, title = NULL, subtitle = NULL) {
-  stopifnot(is.string(x))
+  stopifnot(is_string(x))
   wb$add_markdown(x, title %||% " ", subtitle %||% " ")
 }
 

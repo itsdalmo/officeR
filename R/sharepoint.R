@@ -23,7 +23,7 @@
 #' }
 
 sharepoint_link <- function(link, mounted = FALSE) {
-  if (!is.string(link)) stop("'link' must be a string (character(1).")
+  if (!is_string(link)) stop("'link' must be a string (character(1).")
 
   # Use mounted drives if they exist.
   if (on_windows() && mounted) {

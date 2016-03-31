@@ -17,20 +17,6 @@ as_network_drive <- function(link) {
 
 }
 
-# Turn a character vector into a listing
-# E.g. Turn c("A", "B") into "A and B" -----------------------------------------
-str_list <- function(x, conjunction = "and", quote = "'") {
-  stopifnot(is.character(x))
-  if (!is.null(quote)) {
-    # Pasting quotes because sQuote and dQuote depend on the useFancyQuotes option.
-    x <- paste0(quote, x, quote)
-  }
-  if (length(x) == 1L) {
-    return(x)
-  }
-  paste(paste0(x[1:(length(x)-1)], collapse = ", "), conjunction, x[length(x)])
-}
-
 # Check which OS we are on -----------------------------------------------------
 on_windows <- function() {
   unname(Sys.info()["sysname"]) == "Windows"
@@ -40,14 +26,9 @@ on_osx <- function() {
   unname(Sys.info()["sysname"]) == "Darwin"
 }
 
-# match_all returns ALL matching indices for x in table, ordered by x ----------
-match_all <- function(x, table) {
-  unlist(lapply(x, function(x) which(table == x)))
-}
-
 # normalizes paths and removes trailing /'s ------------------------------------
 clean_path <- function(path) {
-  if (!is.string(path)) stop("Path must be a string.")
+  if (!is_string(path)) stop("Path must be a string.")
 
   # Normalize if path is not absolute.
   if (!grepl("^(/|[A-Za-z]:|\\\\|~)", path)) {
@@ -78,7 +59,7 @@ is_percent <- function(x) {
 }
 
 # Check if x is a string (length 1 character vector.) --------------------------
-is.string <- function(x) {
+is_string <- function(x) {
   is.character(x) && length(x) == 1
 }
 

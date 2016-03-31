@@ -7,7 +7,10 @@
 #'
 #' @param df A data.frame as returned from \code{read_data} or \code{haven::read_sav}.
 #' @author Kristian D. Olsen
+#' @note \code{data.table} input will return a \code{data.frame}.
 #' @export
+#' @examples
+#' # TODO
 
 from_labelled <- function(df) UseMethod("from_labelled")
 
