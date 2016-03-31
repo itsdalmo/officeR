@@ -17,6 +17,7 @@ Imports:
     tools,
     utils
 Suggests:
+    data.table,
     ggplot2,
     httr,
     openxlsx,

@@ -36,7 +36,13 @@ from_labelled.data.frame <- function(df, ...) {
 #' @rdname from_labelled
 #' @export
 from_labelled.data.table <- function(df) {
-  from_labelled(as.data.frame(df))
+  df <- from_labelled(as.data.frame(df))
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+    warning("data.table not installed, returning data.frame.")
+    df
+  } else {
+    data.table::as.data.table(df)
+  }
 }
 
 #' Convert to labelled
