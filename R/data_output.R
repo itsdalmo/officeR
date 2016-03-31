@@ -86,11 +86,12 @@ write_data.data.frame <- function(x, file, ..., delim = NULL) {
   if ("sheet" %in% names(dots)) {
     name <- dots$sheet
   } else {
-    name <- filename_no_ext(file)
+    name <- basename_sans_ext(file)
   }
 
   switch(tolower(tools::file_ext(file)),
          rdata = write_rdata(setNames(list(x), name), file),
+         rda = write_rdata(setNames(list(x), name), file),
          xlsx = write_xlsx(setNames(list(x), name), file, dots),
          sav = write_spss(x, file),
          txt = write_flat(x, file, delim = delim %||% "\t", dots),
@@ -173,7 +174,7 @@ write_spss <- function(data, file) {
 
     if (any(is_long)) {
       columns <- names(data)[is_long]
-      name <- filename_no_ext(file)
+      name <- basename_sans_ext(file)
       spath <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
       # We need an ID to match against when reading in again.
