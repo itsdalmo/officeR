@@ -45,8 +45,8 @@ clean_path <- function(path) {
 }
 
 # Retrieve the filename sans extension -----------------------------------------
-filename_no_ext <- function(file)  {
-  sub(paste0("(.*)\\.", tools::file_ext(file), "$"), "\\1", basename(file))
+basename_sans_ext <- function(file)  {
+  tools::file_path_sans_ext(basename(file))
 }
 
 # Check if a vector represents date or time ------------------------------------
@@ -69,7 +69,7 @@ any_labelled <- function(x) {
 }
 
 # Like is.list, except it does not return true for data.frame ------------------
-is.list2 <- function(x) {
+is_list <- function(x) {
   inherits(x, "list")
 }
 
