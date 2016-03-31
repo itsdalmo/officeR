@@ -4,7 +4,7 @@ Title: Office and R.
 Version: 0.1
 Date: 2016-03-06
 Authors@R: person("Kristian D.", "Olsen", , "kristian@doingit.no", c("aut", "cre"))
-Description: Tiny toolbox office and R.
+Description: Tiny toolbox for office and R.
 License: MIT + file LICENSE
 LazyData: TRUE
 Depends:
