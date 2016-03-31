@@ -22,6 +22,8 @@ write_data(x, file, ..., delim = NULL)
 \item{file}{Path and filename of output.}
 
 \item{...}{Further arguments passed to \code{readr}, \code{openxlsx} or \code{haven}.}
+
+\item{delim}{The delimiter to use when writing flat files.}
 }
 \description{
 A simple wrapper for writing common data formats. The format is determined

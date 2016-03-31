@@ -16,7 +16,7 @@ from_labelled <- function(df) UseMethod("from_labelled")
 
 #' @rdname from_labelled
 #' @export
-from_labelled.data.frame <- function(df, ...) {
+from_labelled.data.frame <- function(df) {
   # Store variable label
   label <- lapply(df, attr, which = "label")
   label <- unlist(lapply(label, function(x) { if(is.null(x)) NA else x }))
@@ -50,7 +50,7 @@ from_labelled.data.table <- function(df) {
 #' Reverses the process from \code{\link{from_labelled}}, by attempting to create
 #' labelled variables in place of \code{factor}, and adding labels to each variable.
 #'
-#' @param df A data.frame, or \code{Survey}.
+#' @param x A data.frame, or \code{Survey}.
 #' @author Kristian D. Olsen
 #' @note Because of a limitation in \code{ReadStat} (it can't write strings longer
 #' than 256 characters), \code{\link{write_data}} will write the long strings as

@@ -45,42 +45,42 @@ test_that("Writing tables to xlsx with to_excel" , {
 
 })
 
-test_that("Tables with write_clipboard and read_clipboard for Windows/OSX" , {
-
-  if (on_windows() || on_osx()) {
-
-    # Read file and write it to clipboard
-    xlsx <- read_data("xlsx.xlsx")
-    write_clipboard(xlsx)
-
-    # Read clipboard and compare
-    cp_xlsx <- read_clipboard()
-    cp_xlsx$missing[1:2] <- NA # to_clipboard recodes NA to "" for excel
-
-    # Compare
-    expect_equal(cp_xlsx, xlsx)
-
-  }
-
-})
-
-test_that("Text with write_clipboard and read_clipboard for Windows/OSX" , {
-
-  if (on_windows() || on_osx()) {
-
-    # Read file and write it to clipboard
-    txt <- "This is \n a test"
-    write_clipboard(txt)
-
-    # Read clipboard and compare
-    cp_txt <- read_clipboard()
-
-    # Compare
-    expect_identical(cp_txt, txt)
-
-  }
-
-})
+# test_that("Tables with write_clipboard and read_clipboard for Windows/OSX" , {
+#
+#   if (on_windows() || on_osx()) {
+#
+#     # Read file and write it to clipboard
+#     xlsx <- read_data("xlsx.xlsx")
+#     write_clipboard(xlsx)
+#
+#     # Read clipboard and compare
+#     cp_xlsx <- read_clipboard()
+#     cp_xlsx$missing[1:2] <- NA # write_clipboard recodes NA to ""
+#
+#     # Compare
+#     expect_equal(cp_xlsx, xlsx)
+#
+#   }
+#
+# })
+#
+# test_that("Text with write_clipboard and read_clipboard for Windows/OSX" , {
+#
+#   if (on_windows() || on_osx()) {
+#
+#     # Read file and write it to clipboard
+#     txt <- "This is \n a test"
+#     write_clipboard(txt)
+#
+#     # Read clipboard and compare
+#     cp_txt <- read_clipboard()
+#
+#     # Compare
+#     expect_identical(cp_txt, txt)
+#
+#   }
+#
+# })
 
 test_that("Read and write_data with list", {
 

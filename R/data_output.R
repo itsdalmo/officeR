@@ -63,6 +63,7 @@ to_clipboard <- write_clipboard
 #' \code{matrix} and \code{table} will be coerced to a \code{data.frame}.
 #' @param file Path and filename of output.
 #' @param ... Further arguments passed to \code{readr}, \code{openxlsx} or \code{haven}.
+#' @param delim The delimiter to use when writing flat files.
 #' @author Kristian D. Olsen
 #' @note Use \code{lapply} to write a list of data to flat files (csv, txt etc).
 #' @export
@@ -81,6 +82,7 @@ write_data <- function(x, file, ..., delim = NULL) {
 #' @export
 write_data.data.frame <- function(x, file, ..., delim = NULL) {
   dots <- list(...)
+  ext <- tolower(tools::file_ext(file))
 
   # Excel/Rdata writer expects a named list as input
   if ("sheet" %in% names(dots)) {
@@ -89,7 +91,7 @@ write_data.data.frame <- function(x, file, ..., delim = NULL) {
     name <- basename_sans_ext(file)
   }
 
-  switch(tolower(tools::file_ext(file)),
+  switch(ext,
          rdata = write_rdata(setNames(list(x), name), file),
          rda = write_rdata(setNames(list(x), name), file),
          xlsx = write_xlsx(setNames(list(x), name), file, dots),

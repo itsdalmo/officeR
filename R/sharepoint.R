@@ -6,7 +6,7 @@
 #' @param link A string starting with \code{http}.
 #' @param mounted Set this to \code{TRUE} if you are on windows and have mounted
 #' the sharepoint server as a network drive.
-#' @param x An object returned from \code{sharepoint_link}.
+#' @param file An object returned from \code{sharepoint_link}.
 #' @param destination Optional: When sharepoint is not mounted, files are always
 #' downloaded before being read into R. The file is temporary if you do not set
 #' the destination.
@@ -42,14 +42,14 @@ sharepoint_link <- function(link, mounted = FALSE) {
 
 #' @rdname sharepoint_link
 #' @export
-read_data.sharepoint <- function(x, destination = NULL, ...) {
+read_data.sharepoint <- function(file, destination = NULL, ...) {
   if (!requireNamespace("httr")) {
     stop("'httr' is required for reading from sharepoint.")
   }
 
   # Always download the file before reading.
   if (is.null(destination)) {
-    destination <- tempfile(fileext = paste0(".", tools::file_ext(x)))
+    destination <- tempfile(fileext = paste0(".", tools::file_ext(file)))
     on.exit(unlink(destination, recursive = TRUE, force = TRUE), add = TRUE)
   }
 
@@ -66,17 +66,17 @@ read_data.sharepoint <- function(x, destination = NULL, ...) {
   }
 
   # Check SP version
-  sp10 <- httr::modify_url(x, path = "_vti_bin/ListData.svc/")
+  sp10 <- httr::modify_url(file, path = "_vti_bin/ListData.svc/")
   sp10 <- httr::GET(sp10, httr::authenticate(usr, pwd, type = "ntlm"))
 
   if (httr::status_code(sp10) == 200) {
-    if (tools::file_ext(x) == "") {
+    if (tools::file_ext(file) == "") {
       stop("Cannot read directories. Sharepoint 2010 does not support REST.")
     }
   }
 
   # GET and check status
-  resp <- httr::GET(x, httr::authenticate(usr, pwd, type = "ntlm"), httr::write_disk(destination))
+  resp <- httr::GET(file, httr::authenticate(usr, pwd, type = "ntlm"), httr::write_disk(destination))
   httr::stop_for_status(resp)
 
   # Read data
@@ -86,6 +86,6 @@ read_data.sharepoint <- function(x, destination = NULL, ...) {
 
 #' @rdname sharepoint_link
 #' @export
-read_data.sharepoint_mount <- function(x, ...) {
-  read_data(x, ...)
+read_data.sharepoint_mount <- function(file, ...) {
+  read_data(file, ...)
 }

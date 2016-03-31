@@ -8,9 +8,9 @@
 \usage{
 sharepoint_link(link, mounted = FALSE)
 
-\method{read_data}{sharepoint}(x, destination = NULL, ...)
+\method{read_data}{sharepoint}(file, destination = NULL, ...)
 
-\method{read_data}{sharepoint_mount}(x, ...)
+\method{read_data}{sharepoint_mount}(file, ...)
 }
 \arguments{
 \item{link}{A string starting with \code{http}.}
@@ -18,7 +18,7 @@ sharepoint_link(link, mounted = FALSE)
 \item{mounted}{Set this to \code{TRUE} if you are on windows and have mounted
 the sharepoint server as a network drive.}
 
-\item{x}{An object returned from \code{sharepoint_link}.}
+\item{file}{An object returned from \code{sharepoint_link}.}
 
 \item{destination}{Optional: When sharepoint is not mounted, files are always
 downloaded before being read into R. The file is temporary if you do not set

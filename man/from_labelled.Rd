@@ -8,7 +8,7 @@
 \usage{
 from_labelled(df)
 
-\method{from_labelled}{data.frame}(df, ...)
+\method{from_labelled}{data.frame}(df)
 
 \method{from_labelled}{data.table}(df)
 }

@@ -35,9 +35,7 @@
 #' }
 
 to_excel <- function(df, wb, ...) {
-  if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    stop("This function requires 'openxlsx'.")
-  } else if (!inherits(wb, "Workbook")) {
+  if (!inherits(wb, "Workbook")) {
     stop ("'wb' should be a Workbook. See help(to_excel).")
   } else if (!identical(attr(class(wb), "package"), "openxlsx")) {
     stop("Unknown type of 'workbook'.")
@@ -48,17 +46,12 @@ to_excel <- function(df, wb, ...) {
 #' @rdname to_excel
 #' @export
 excel_workbook <- function() {
-  if (!requireNamespace("openxlsx")) {
-    stop("'openxlsx' required to create a Workbook.")
-  }
   openxlsx::createWorkbook()
 }
 
 #' @export
 write_data.Workbook <- function(x, file, ...) {
-  if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    stop("This function requires 'openxlsx'.")
-  } else if (!identical(attr(class(x), "package"), "openxlsx")) {
+  if (!identical(attr(class(x), "package"), "openxlsx")) {
     stop("Unknown type of 'workbook'.")
   }
   openxlsx::saveWorkbook(x, file, ...)

@@ -13,7 +13,7 @@ to_labelled(x)
 \method{to_labelled}{data.table}(x)
 }
 \arguments{
-\item{df}{A data.frame, or \code{Survey}.}
+\item{x}{A data.frame, or \code{Survey}.}
 }
 \description{
 Reverses the process from \code{\link{from_labelled}}, by attempting to create

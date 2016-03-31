@@ -1,6 +1,6 @@
 Package: officeR
 Type: Package
-Title: Office and R.
+Title: Office and R
 Version: 0.1
 Date: 2016-03-06
 Authors@R: person("Kristian D.", "Olsen", , "kristian@doingit.no", c("aut", "cre"))
@@ -11,6 +11,7 @@ Depends:
     R (>= 3.2)
 Imports:
     haven,
+    openxlsx,
     R6,
     readr,
     readxl,
@@ -20,7 +21,6 @@ Suggests:
     data.table,
     ggplot2,
     httr,
-    openxlsx,
     testthat,
     ReporteRs (>= 0.8.6),
     knitr,
