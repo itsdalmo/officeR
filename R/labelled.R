@@ -37,7 +37,7 @@ from_labelled.data.frame <- function(df, ...) {
 #' @export
 from_labelled.data.table <- function(df) {
   df <- from_labelled(as.data.frame(df))
-  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+  if (!requireNamespace("data.table", quietly = TRUE)) {
     warning("data.table not installed, returning data.frame.")
     df
   } else {
