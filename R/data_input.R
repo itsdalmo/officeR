@@ -79,6 +79,8 @@ from_clipboard <- read_clipboard
 
 read_data <- function(file, ...) UseMethod("read_data")
 
+#' @rdname read_data
+#' @export
 read_data.default <- function(file, ..., delim = NULL, encoding = "UTF-8") {
   dots <- list(...)
   file <- clean_path(file)

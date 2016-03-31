@@ -56,17 +56,28 @@ ppt_workbook <- function(template = NULL, font = "Calibri", fontsize = 10L) {
   pptWorkbook$new(template)
 }
 
+#' @export
+write_data.pptWorkbook <- function(x, file, ...) {
+  if (!requireNamespace("ReporteRs")) {
+    stop("'ReporteRs' required to write pptWorkbook.")
+  }
+  ReporteRs::writeDoc(x$obj, file = file)
+}
+
 #' @rdname to_ppt
 #' @export
 to_ppt.data.frame <- function(x, wb, title = NULL, subtitle = NULL) {
   wb$add_table(format_flextable(x), title %||% " ", subtitle %||% " ")
 }
 
+
+#' @export
 to_ppt.matrix <- function(x, wb, ...) {
   warning("Coercing ", class(x), " to data.frame.")
   to_ppt(as.data.frame(x, stringsAsFactors = FALSE), wb, ...)
 }
 
+#' @export
 to_ppt.table <- to_ppt.matrix
 
 #' @rdname to_ppt
@@ -82,6 +93,7 @@ to_ppt.ggplot <- function(x, wb, title = NULL, subtitle = NULL) {
 }
 
 # Plots returned by evaluate::evaluate().
+#' @export
 to_ppt.recodedplot <- to_ppt.ggplot
 
 #' @rdname to_ppt

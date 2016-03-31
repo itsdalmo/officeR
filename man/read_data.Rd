@@ -2,9 +2,12 @@
 % Please edit documentation in R/data_input.R
 \name{read_data}
 \alias{read_data}
+\alias{read_data.default}
 \title{Read common data formats}
 \usage{
 read_data(file, ...)
+
+\method{read_data}{default}(file, ..., delim = NULL, encoding = "UTF-8")
 }
 \arguments{
 \item{file}{Path to a file with a supported extension.}

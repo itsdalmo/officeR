@@ -77,6 +77,8 @@ write_data <- function(x, file, ..., delim = NULL) {
   UseMethod("write_data")
 }
 
+#' @rdname write_data
+#' @export
 write_data.data.frame <- function(x, file, ..., delim = NULL) {
   dots <- list(...)
 
@@ -100,6 +102,8 @@ write_data.data.frame <- function(x, file, ..., delim = NULL) {
   invisible()
 }
 
+#' @rdname write_data
+#' @export
 write_data.list <- function(x, file, ...) {
   dots <- list(...)
   ext <- tolower(tools::file_ext(file))
@@ -131,35 +135,22 @@ write_data.list <- function(x, file, ...) {
   invisible()
 }
 
+#' @export
 write_data.matrix <- function(x, file, ...) {
   write_data(as.data.frame(x, stringsAsFactors = FALSE), file, ...)
 }
 
+#' @export
 write_data.table <- write_data.matrix
 
+#' @export
 write_data.character <- function(x, file, ...) {
   # Use readr by default? Encoding?
   stop("Work in progress. Not ready yet.")
 }
 
-write_data.Workbook <- function(x, file, ...) {
-  if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    stop("This function requires 'openxlsx'.")
-  } else if (!identical(attr(class(x), "package"), "openxlsx")) {
-    stop("Unknown type of 'workbook'.")
-  }
-  openxlsx::saveWorkbook(x, file, ...)
-
-}
-
-write_data.pptWorkbook <- function(x, file, ...) {
-  if (!requireNamespace("ReporteRs")) {
-    stop("'ReporteRs' required to write pptWorkbook.")
-  }
-  ReporteRs::writeDoc(x$obj, file = file)
-}
-
-# Write ggplots ----------------------------------------------------------------
+#' @rdname write_data
+#' @export
 write_data.ggplot <- function(x, file, ...) {
   if (!requireNamespace("ggplot2")) {
     stop("'ggplot2' required to write plots.")

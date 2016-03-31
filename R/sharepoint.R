@@ -41,6 +41,7 @@ sharepoint_link <- function(link, mounted = FALSE) {
 }
 
 #' @rdname sharepoint_link
+#' @export
 read_data.sharepoint <- function(x, destination = NULL, ...) {
   if (!requireNamespace("httr")) {
     stop("'httr' is required for reading from sharepoint.")
@@ -84,6 +85,7 @@ read_data.sharepoint <- function(x, destination = NULL, ...) {
 }
 
 #' @rdname sharepoint_link
+#' @export
 read_data.sharepoint_mount <- function(x, ...) {
   read_data(x, ...)
 }

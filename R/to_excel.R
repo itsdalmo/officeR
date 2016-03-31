@@ -54,6 +54,17 @@ excel_workbook <- function() {
   openxlsx::createWorkbook()
 }
 
+#' @export
+write_data.Workbook <- function(x, file, ...) {
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+    stop("This function requires 'openxlsx'.")
+  } else if (!identical(attr(class(x), "package"), "openxlsx")) {
+    stop("Unknown type of 'workbook'.")
+  }
+  openxlsx::saveWorkbook(x, file, ...)
+
+}
+
 #' @rdname to_excel
 #' @export
 to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
@@ -115,11 +126,13 @@ to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
 
 }
 
+#' @export
 to_excel.matrix <- function(df, wb, ...) {
   warning("Coercing ", class(df), " to data.frame.")
   to_excel(as.data.frame(df, stringsAsFactors = FALSE), wb, ...)
 }
 
+#' @export
 to_excel.table <- to_excel.matrix
 
 # Set column formats in excel --------------------------------------------------

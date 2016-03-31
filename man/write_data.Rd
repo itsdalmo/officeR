@@ -2,9 +2,18 @@
 % Please edit documentation in R/data_output.R
 \name{write_data}
 \alias{write_data}
+\alias{write_data.data.frame}
+\alias{write_data.ggplot}
+\alias{write_data.list}
 \title{Write common file formats}
 \usage{
 write_data(x, file, ..., delim = NULL)
+
+\method{write_data}{data.frame}(x, file, ..., delim = NULL)
+
+\method{write_data}{list}(x, file, ...)
+
+\method{write_data}{ggplot}(x, file, ...)
 }
 \arguments{
 \item{x}{The data to be written. (\code{data.frame}, \code{list} or \code{survey}).
