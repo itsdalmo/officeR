@@ -30,7 +30,7 @@ ppt_workbook(template = NULL, font = "Calibri", fontsize = 10L)
 
 \item{subtitle}{Subtitle.}
 
-\item{template}{Path to a \code{pptx} template. Default is the template provided
+\item{template}{Path to a powerpoint template. Default is the template provided
 in this package.}
 
 \item{font}{Default font (Replaces the \code{ReporteRs-default-font} option).}
@@ -40,8 +40,8 @@ in this package.}
 \description{
 \code{to_ppt} allows you to pass R objects to an open \code{pptWorkbook},
 and write it later with \code{write_data}. The \code{pptWorkbook} can be created
-by calling \code{ppt_workbook}. \code{to_ppt} will always format the output
-and add it to a new slide.
+by calling \code{ppt_workbook}. \code{to_ppt} will always format
+the output and add it to a new slide.
 }
 \details{
 You can use this function to pass \code{plot}, \code{data.frame} (\code{table} and
@@ -49,7 +49,7 @@ You can use this function to pass \code{plot}, \code{data.frame} (\code{table} a
 Strings are assumed to be markdown.
 }
 \note{
-This function requires \code{ReporteRs}. The \code{pptWorkbook} object
+This function requires \pkg{ReporteRs}. The \code{pptWorkbook} object
 is a thin R6 wrapper around ReporteR's \code{pptx}, and allow us to use
 \code{to_ppt} in chained expressions, since the workbook is mutable.
 }

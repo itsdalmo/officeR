@@ -13,7 +13,8 @@ from_labelled(df)
 \method{from_labelled}{data.table}(df)
 }
 \arguments{
-\item{df}{A data.frame as returned from \code{read_data} or \code{haven::read_sav}.}
+\item{df}{A data.frame as returned from \code{read_data} or
+\code{\link[haven]{read_sav}}.}
 }
 \description{
 When reading SPSS files with \code{\link{read_data}}, the output contains vectors
@@ -22,7 +23,7 @@ as an attribute (by the same name) to the data, and converts any \code{labelled}
 variables into factors.
 }
 \note{
-\code{data.table} input will return a \code{data.frame}.
+\code{\link[data.table]{data.table}} input returns a copy of the \code{data.table}.
 }
 \examples{
 # TODO

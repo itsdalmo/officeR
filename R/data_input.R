@@ -5,7 +5,7 @@
 #' and then converts it to a data.frame.
 #'
 #' @param delim The delimiter for columns.
-#' @param ... Further arguments passed to \code{readr::read_delim}.
+#' @param ... Further arguments passed to \code{\link[readr]{read_delim}}.
 #' @author Kristian D. Olsen
 #' @note This function only works on Windows or OSX, and the data-size cannot
 #' exceed 128kb in Windows.
@@ -58,11 +58,11 @@ from_clipboard <- read_clipboard
 #' Read common data formats
 #'
 #' A simple wrapper for reading data which currently supports Rdata, sav, txt,
-#' csv, csv2 and xlsx. Under the hood, it uses \code{readxl}, \code{readr} and
-#' \code{haven}.
+#' csv, csv2 and xlsx. Under the hood, it uses \pkg{readxl}, \pkg{readr} and
+#' \pkg{haven}.
 #'
 #' @param file Path to a file with a supported extension.
-#' @param ... Additional arguments passed to \code{readxl} and \code{readr}. For
+#' @param ... Additional arguments passed to \pkg{readxl} and \pkg{readr}. For
 #' instance you can use \code{sheet} to specify a xlsx sheet when reading.
 #' @param delim The deliminator used for flat files.
 #' @param encoding The current encoding for the file. Defaults to \code{UTF-8}.

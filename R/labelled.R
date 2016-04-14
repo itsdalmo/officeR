@@ -5,9 +5,10 @@
 #' as an attribute (by the same name) to the data, and converts any \code{labelled}
 #' variables into factors.
 #'
-#' @param df A data.frame as returned from \code{read_data} or \code{haven::read_sav}.
+#' @param df A data.frame as returned from \code{read_data} or
+#' \code{\link[haven]{read_sav}}.
 #' @author Kristian D. Olsen
-#' @note \code{data.table} input will return a \code{data.frame}.
+#' @note \code{\link[data.table]{data.table}} input returns a copy of the \code{data.table}.
 #' @export
 #' @examples
 #' # TODO
@@ -48,11 +49,11 @@ from_labelled.data.table <- function(df) {
 #' Convert to labelled
 #'
 #' Reverses the process from \code{\link{from_labelled}}, by attempting to create
-#' labelled variables in place of \code{factor}, and adding labels to each variable.
+#' labelled variables in place of \code{\link[base]{factor}}, and adding labels to each variable.
 #'
-#' @param x A data.frame, or \code{Survey}.
+#' @param x A data.frame, or \code{\link[reporttoolDT]{Survey}}.
 #' @author Kristian D. Olsen
-#' @note Because of a limitation in \code{ReadStat} (it can't write strings longer
+#' @note Because of a limitation in \pkg{ReadStat} (it can't write strings longer
 #' than 256 characters), \code{\link{write_data}} will write the long strings as
 #' a separate .Rdata file. If you use \code{\link{read_data}}, you will get them back.
 #' @export

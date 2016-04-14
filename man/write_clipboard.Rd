@@ -12,7 +12,7 @@ to_clipboard(x, ...)
 \arguments{
 \item{x}{The data or text to write.}
 
-\item{...}{Further arguments passed to \code{write.table}.}
+\item{...}{Further arguments passed to \code{\link{write.table}}.}
 }
 \description{
 Wrapper for writing to windows/OSX clipboards with the most-used defaults for a

@@ -1,7 +1,7 @@
 #' Prepare a sharepoint link for reading
 #'
-#' This function is minimalistic wrapper for \code{httr}, with the intention
-#' of making it easy to read files from sharepoint using \code{read_data}.
+#' This function is minimalistic wrapper for \pkg{httr}, with the intention
+#' of making it easy to read files from sharepoint using \code{\link{read_data}}.
 #'
 #' @param link A string starting with \code{http}.
 #' @param mounted Set this to \code{TRUE} if you are on windows and have mounted
@@ -10,9 +10,9 @@
 #' @param destination Optional: When sharepoint is not mounted, files are always
 #' downloaded before being read into R. The file is temporary if you do not set
 #' the destination.
-#' @param ... Further arguments passed to \code{read_data}.
+#' @param ... Further arguments passed to \code{\link{read_data}}.
 #' @author Kristian D. Olsen
-#' @note This function requires \code{httr} if the drive is not mounted. User/password
+#' @note This function requires \pkg{httr} if the drive is not mounted. User/password
 #' will be requested and stored for the current R session. Imporant that you don't
 #' share your .Rhistory after this!
 #' @export

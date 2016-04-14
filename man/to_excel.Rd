@@ -38,10 +38,10 @@ sheet before writing.}
 \code{to_excel} allows you to pass R objects (primarily a \code{data.frame}) to
 an open \code{Workbook}, and write it later with \code{write_data}. The workbook
 can be created by calling \code{excel_workbook}, which is itself a wrapper for
-\code{openxlsx::createWorkbook()}.
+\code{\link[openxlsx]{createWorkbook}}.
 }
 \note{
-This function requires \code{openxlsx}.
+This function requires \pkg{openxlsx}.
 }
 \examples{
 if (require(openxlsx)) {

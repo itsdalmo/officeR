@@ -16,20 +16,21 @@ write_data(x, file, ..., delim = NULL)
 \method{write_data}{ggplot}(x, file, ...)
 }
 \arguments{
-\item{x}{The data to be written. (\code{data.frame}, \code{list} or \code{survey}).
+\item{x}{The data to be written. (\code{data.frame}, \code{list} or
+\code{\link[reporttoolDT]{Survey}}).
 \code{matrix} and \code{table} will be coerced to a \code{data.frame}.}
 
 \item{file}{Path and filename of output.}
 
-\item{...}{Further arguments passed to \code{readr}, \code{openxlsx} or \code{haven}.}
+\item{...}{Further arguments passed to \pkg{readr}, \pkg{openxlsx} or \pkg{haven}.}
 
 \item{delim}{The delimiter to use when writing flat files.}
 }
 \description{
 A simple wrapper for writing common data formats. The format is determined
-by the extension given in \code{file}. Flat files are written with \code{readr},
-and the encoding is always \code{UTF-8}. For xlsx, the function uses \code{to_excel}
-(which in turn uses \code{openxlsx}).
+by the extension given in \code{file}. Flat files are written with \pkg{readr},
+and the encoding is always \code{UTF-8}. For xlsx, the function uses
+\code{\link{to_excel}} (which in turn uses \pkg{openxlsx}).
 }
 \note{
 Use \code{lapply} to write a list of data to flat files (csv, txt etc).

@@ -12,7 +12,7 @@ from_clipboard(delim = "\\t", ...)
 \arguments{
 \item{delim}{The delimiter for columns.}
 
-\item{...}{Further arguments passed to \code{readr::read_delim}.}
+\item{...}{Further arguments passed to \code{\link[readr]{read_delim}}.}
 }
 \description{
 Thin wrapper for reading from windows/OSX clipboards with the most-used defaults.

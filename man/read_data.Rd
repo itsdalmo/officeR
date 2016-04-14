@@ -12,7 +12,7 @@ read_data(file, ...)
 \arguments{
 \item{file}{Path to a file with a supported extension.}
 
-\item{...}{Additional arguments passed to \code{readxl} and \code{readr}. For
+\item{...}{Additional arguments passed to \pkg{readxl} and \pkg{readr}. For
 instance you can use \code{sheet} to specify a xlsx sheet when reading.}
 
 \item{delim}{The deliminator used for flat files.}
@@ -25,8 +25,8 @@ A data.frame. If more than one sheet is read from a xlsx file
 }
 \description{
 A simple wrapper for reading data which currently supports Rdata, sav, txt,
-csv, csv2 and xlsx. Under the hood, it uses \code{readxl}, \code{readr} and
-\code{haven}.
+csv, csv2 and xlsx. Under the hood, it uses \pkg{readxl}, \pkg{readr} and
+\pkg{haven}.
 }
 \examples{
 \dontrun{

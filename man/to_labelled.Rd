@@ -13,14 +13,14 @@ to_labelled(x)
 \method{to_labelled}{data.table}(x)
 }
 \arguments{
-\item{x}{A data.frame, or \code{Survey}.}
+\item{x}{A data.frame, or \code{\link[reporttoolDT]{Survey}}.}
 }
 \description{
 Reverses the process from \code{\link{from_labelled}}, by attempting to create
-labelled variables in place of \code{factor}, and adding labels to each variable.
+labelled variables in place of \code{\link[base]{factor}}, and adding labels to each variable.
 }
 \note{
-Because of a limitation in \code{ReadStat} (it can't write strings longer
+Because of a limitation in \pkg{ReadStat} (it can't write strings longer
 than 256 characters), \code{\link{write_data}} will write the long strings as
 a separate .Rdata file. If you use \code{\link{read_data}}, you will get them back.
 }

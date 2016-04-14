@@ -4,7 +4,7 @@
 #' scandinavian locale.
 #'
 #' @param x The data or text to write.
-#' @param ... Further arguments passed to \code{write.table}.
+#' @param ... Further arguments passed to \code{\link{write.table}}.
 #' @author Kristian D. Olsen
 #' @note This function only works on Windows or OSX, and the data-size cannot
 #' exceed 128kb in Windows.
@@ -55,14 +55,15 @@ to_clipboard <- write_clipboard
 #' Write common file formats
 #'
 #' A simple wrapper for writing common data formats. The format is determined
-#' by the extension given in \code{file}. Flat files are written with \code{readr},
-#' and the encoding is always \code{UTF-8}. For xlsx, the function uses \code{to_excel}
-#' (which in turn uses \code{openxlsx}).
+#' by the extension given in \code{file}. Flat files are written with \pkg{readr},
+#' and the encoding is always \code{UTF-8}. For xlsx, the function uses
+#' \code{\link{to_excel}} (which in turn uses \pkg{openxlsx}).
 #'
-#' @param x The data to be written. (\code{data.frame}, \code{list} or \code{survey}).
+#' @param x The data to be written. (\code{data.frame}, \code{list} or
+#' \code{\link[reporttoolDT]{Survey}}).
 #' \code{matrix} and \code{table} will be coerced to a \code{data.frame}.
 #' @param file Path and filename of output.
-#' @param ... Further arguments passed to \code{readr}, \code{openxlsx} or \code{haven}.
+#' @param ... Further arguments passed to \pkg{readr}, \pkg{openxlsx} or \pkg{haven}.
 #' @param delim The delimiter to use when writing flat files.
 #' @author Kristian D. Olsen
 #' @note Use \code{lapply} to write a list of data to flat files (csv, txt etc).

@@ -3,7 +3,7 @@
 #' \code{to_excel} allows you to pass R objects (primarily a \code{data.frame}) to
 #' an open \code{Workbook}, and write it later with \code{write_data}. The workbook
 #' can be created by calling \code{excel_workbook}, which is itself a wrapper for
-#' \code{openxlsx::createWorkbook()}.
+#' \code{\link[openxlsx]{createWorkbook}}.
 #'
 #' @param df A \code{data.frame}, \code{table} or \code{matrix}.
 #' @param wb A \code{Workbook}.
@@ -17,7 +17,7 @@
 #' @param row Specify the startingrow when writing data to a new sheet.
 #' @param col Start column. Same as for row.
 #' @author Kristian D. Olsen
-#' @note This function requires \code{openxlsx}.
+#' @note This function requires \pkg{openxlsx}.
 #' @export
 #' @examples
 #' if (require(openxlsx)) {
