@@ -2,8 +2,8 @@
 #'
 #' \code{to_ppt} allows you to pass R objects to an open \code{pptWorkbook},
 #' and write it later with \code{write_data}. The \code{pptWorkbook} can be created
-#' by calling \code{ppt_workbook}. \code{to_ppt} will always format the output
-#' and add it to a new slide.
+#' by calling \code{ppt_workbook}. \code{to_ppt} will always format
+#' the output and add it to a new slide.
 #'
 #' You can use this function to pass \code{plot}, \code{data.frame} (\code{table} and
 #' \code{matrix} will be coerced), and \code{character} objects to the workbook.
@@ -13,12 +13,12 @@
 #' @param wb A \code{pptWorkbook}.
 #' @param title Title to use for the new slide.
 #' @param subtitle Subtitle.
-#' @param template Path to a \code{pptx} template. Default is the template provided
+#' @param template Path to a powerpoint template. Default is the template provided
 #' in this package.
 #' @param font Default font (Replaces the \code{ReporteRs-default-font} option).
 #' @param fontsize Default fontsize (Replaces the \code{ReporteRs-fontsize} option).
 #' @author Kristian D. Olsen
-#' @note This function requires \code{ReporteRs}. The \code{pptWorkbook} object
+#' @note This function requires \pkg{ReporteRs}. The \code{pptWorkbook} object
 #' is a thin R6 wrapper around ReporteR's \code{pptx}, and allow us to use
 #' \code{to_ppt} in chained expressions, since the workbook is mutable.
 #' @export
@@ -103,6 +103,23 @@ to_ppt.character <- function(x, wb, title = NULL, subtitle = NULL) {
   wb$add_markdown(x, title %||% " ", subtitle %||% " ")
 }
 
+#' Add a title slide
+#'
+#' Use \code{add_ts} to add a title slide to a \code{pptWorkbook}.
+#'
+#' @param wb A \code{pptWorkbook}.
+#' @param type The type of report (blue text).
+#' @param title Title for the report (red text).
+#' @param author The first line after the title, usually author.
+#' @param date Last line on the title slide. E.g. year.
+#' @author Kristian D. Olsen
+#' @seealso \code{\link{to_ppt}} for more information.
+#' @export
+
+add_ts <- function(wb, type = NULL, title = NULL, author = NULL, date = NULL) {
+  wb$title_slide(type %||% " ",  title %||% " ", author %||% " ", date %||% " ")
+}
+
 # Workbook for powerpoint (R6 Class) -------------------------------------------
 # This exists because ReporteRs does not use a mutable object for documents,
 # and I want to_ppt/to_excel to have identical interfaces.
@@ -117,6 +134,15 @@ pptWorkbook <- R6::R6Class("pptWorkbook",
       }
       template <- template %||% system.file("ppt", "template.pptx", package = "officeR")
       self$obj <- ReporteRs::pptx(template = clean_path(template))
+    },
+
+    title_slide = function(type, title, author, date) {
+      self$obj <- ReporteRs::addSlide(self$obj, slide.layout = "Title Slide")
+      self$obj <- ReporteRs::addTitle(self$obj, type) # Blue text
+      self$obj <- ReporteRs::addParagraph(self$obj, title) # Red text
+      self$obj <- ReporteRs::addParagraph(self$obj, author)
+      self$obj <- ReporteRs::addParagraph(self$obj, date)
+      invisible(self)
     },
 
     add_table = function(x, title, subtitle) {
