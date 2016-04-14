@@ -171,7 +171,9 @@ test_that("Read and write_data for .sav files", {
   expect_identical(sav, xlsx)
 
   fileName <- file.path(tempdir(), "sav.sav")
-  write_data(sav, fileName)
+  expect_warning(
+    write_data(sav, fileName),
+    "No labelled")
 
   # Check written data
   w_sav <- read_data(fileName)
