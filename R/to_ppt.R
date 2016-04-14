@@ -94,7 +94,7 @@ to_ppt.ggplot <- function(x, wb, title = NULL, subtitle = NULL) {
 
 # Plots returned by evaluate::evaluate().
 #' @export
-to_ppt.recodedplot <- to_ppt.ggplot
+to_ppt.recordedplot <- to_ppt.ggplot
 
 #' @rdname to_ppt
 #' @export
