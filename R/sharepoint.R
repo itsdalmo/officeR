@@ -27,10 +27,8 @@ sharepoint_link <- function(link, mounted = FALSE) {
 
   # Use mounted drives if they exist.
   if (on_windows() && mounted) {
-    drive <- as_network_drive(link)
-    if (file.exists(drive)) {
-      link <- structure(drive, class = c("sharepoint_mount", class(link)))
-    }
+    link <- as_network_drive(link)
+    link <- structure(link, class = c("sharepoint_mount", class(link)))
   } else {
     if (!requireNamespace("httr")) {
       stop("'httr' is required for reading from sharepoint.")
@@ -87,5 +85,5 @@ read_data.sharepoint <- function(file, destination = NULL, ...) {
 #' @rdname sharepoint_link
 #' @export
 read_data.sharepoint_mount <- function(file, ...) {
-  read_data(file, ...)
+  NextMethod()
 }
