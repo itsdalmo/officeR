@@ -3,7 +3,7 @@ as_network_drive <- function(link) {
   if (!on_windows()) {
     warning("This function only returns a path for network drives on Windows.")
   }
-  is_url <- grep("^https?://.*[^/]\\.[a-z]+/.*", link, ignore.case = TRUE)
+  is_url <- grepl("^https?://.*[^/]\\.[a-z]+/.*", link, ignore.case = TRUE)
   if (!is_url) {
     stop("Input was not a URL:\n", link, "\n(Make sure to include http://).")
   }
