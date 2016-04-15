@@ -164,7 +164,9 @@ pptWorkbook <- R6::R6Class("pptWorkbook",
     add_markdown = function(x, title, subtitle) {
       self$obj <- ReporteRs::addSlide(self$obj, slide.layout = 'Title and Content')
       self$obj <- ReporteRs::addTitle(self$obj, title)
-      self$obj <- ReporteRs::addMarkdown(self$obj, text = x)
+      suppressWarnings( # Depreciated warning - covered in tests.
+        self$obj <- ReporteRs::addMarkdown(self$obj, text = x)
+        )
       self$obj <- ReporteRs::addParagraph(self$obj, subtitle)
       invisible(self)
     },
