@@ -66,10 +66,10 @@ to_labelled <- function(x) UseMethod("to_labelled")
 #' @export
 to_labelled.data.frame <- function(x) {
   labels <- attr(x, "labels")
-  if (is.null(labels)) {
+  if (!is.null(labels)) {
     # Assign label to the appropriate variable (against a baseline of NA)
     labels <- c(setNames(rep(NA, length(names(x))), names(x)), labels)
-    labels <- labels[!duplicated(labels, fromLast = FALSE)]
+    labels <- labels[!duplicated(names(labels), fromLast = TRUE)]
   } else {
     # If labels are not an attribute of the data, check variables.
     # (e.g., if you have just read in data and not converted from_labelled yet.)
@@ -94,7 +94,13 @@ to_labelled.data.frame <- function(x) {
 #' @rdname to_labelled
 #' @export
 to_labelled.data.table <- function(x) {
-  to_labelled(as.data.frame(x))
+  df <- to_labelled(as.data.frame(x))
+  if (!requireNamespace("data.table", quietly = TRUE)) {
+    warning("data.table not installed, returning data.frame.")
+    df
+  } else {
+    data.table::as.data.table(df)
+  }
 }
 
 # Convert factors to a (integer based) labelled variable -----------------------
