@@ -10,7 +10,7 @@ LazyData: TRUE
 Depends:
     R (>= 3.2)
 Imports:
-    haven,
+    haven (>= 0.2.0.9000),
     openxlsx,
     R6,
     readr,
@@ -25,5 +25,7 @@ Suggests:
     ReporteRs (>= 0.8.6),
     knitr,
     rmarkdown
+Remotes:
+    hadley/haven
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
