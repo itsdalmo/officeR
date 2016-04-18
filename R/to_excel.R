@@ -61,7 +61,8 @@ write_data.Workbook <- function(x, file, ...) {
 #' @rdname to_excel
 #' @export
 to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
-                                format = !is.null(title), append = TRUE, row = 1L, col = 1L) {
+                                format = !is.null(title), append = TRUE,
+                                row = 1L, col = 1L, ...) {
 
   # Check input
   if (!is_string(sheet)) {

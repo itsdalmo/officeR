@@ -11,7 +11,7 @@ to_excel(df, wb, ...)
 excel_workbook()
 
 \method{to_excel}{data.frame}(df, wb, title = " ", sheet = "tables",
-  format = !is.null(title), append = TRUE, row = 1L, col = 1L)
+  format = !is.null(title), append = TRUE, row = 1L, col = 1L, ...)
 }
 \arguments{
 \item{df}{A \code{data.frame}, \code{table} or \code{matrix}.}
