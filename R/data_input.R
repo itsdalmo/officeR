@@ -62,8 +62,8 @@ from_clipboard <- read_clipboard
 #' \pkg{haven}.
 #'
 #' @param file Path to a file with a supported extension.
-#' @param ... Additional arguments passed to \pkg{readxl} and \pkg{readr}. For
-#' instance you can use \code{sheet} to specify a xlsx sheet when reading.
+#' @param ... Additional arguments passed to underlying functions.
+#' @param sheet Specify one or more sheets when reading excel files.
 #' @param delim The deliminator used for flat files.
 #' @param encoding The current encoding for the file. Defaults to \code{UTF-8}.
 #' @author Kristian D. Olsen
@@ -81,19 +81,20 @@ read_data <- function(file, ...) UseMethod("read_data")
 
 #' @rdname read_data
 #' @export
-read_data.default <- function(file, ..., delim = NULL, encoding = "UTF-8") {
-  dots <- list(...)
+read_data.default <- function(file, ..., sheet = NULL, delim = NULL, encoding = "UTF-8") {
   file <- clean_path(file)
-  if (!file.exists(file)) stop("Path does not exist:\n", file)
-  # Pick input-function based on extension
+  if (!file.exists(file))
+    stop("Path does not exist:\n", file)
+
   switch(tolower(tools::file_ext(file)),
-         sav = read_spss(file),
-         txt = read_flat(file, delim = delim %||% "\t", encoding, dots),
-         tsv = read_flat(file, delim = delim %||% "\t", encoding, dots),
-         csv = read_flat(file, delim = delim %||% ",", encoding, dots),
-         xlsx = read_xlsx(file, dots),
-         xls = read_xlsx(file, dots),
-         rdata = read_rdata(file),
+         sav = read_spss(file, ...),
+         txt = read_flat(file, delim = delim %||% "\t", encoding, ...),
+         tsv = read_flat(file, delim = delim %||% "\t", encoding, ...),
+         csv = read_flat(file, delim = delim %||% ",", encoding, ...),
+         xlsx = read_xlsx(file, sheet, ...),
+         xls = read_xlsx(file, sheet, ...),
+         rda = read_rdata(file, ...),
+         rdata = read_rdata(file, ...),
          stop("Unrecognized input format in:\n", file, call. = FALSE))
 }
 
@@ -107,11 +108,11 @@ read_spss <- function(file) {
   sfile <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
   if (file.exists(sfile)) {
-    strings <- as.data.frame(read_data(sfile))
+    strings <- as.data.frame(read_data(sfile), stringsAsFactors = FALSE)
     rows <- match(x$string_id, strings$string_id)
     vars <- intersect(names(strings), names(x))
 
-    x[vars] <- Map(function(d, a) { attr(d, "label") <- attr(a, "label"); d }, strings[rows, vars], x[vars])
+    x[vars] <- Map(function(s, d) { attr(s, "label") <- attr(d, "label"); s }, strings[rows, vars], x[vars])
     x$string_id <- NULL # Remove string ID when reading
     warning("Found Rdata with long strings in same directory. Joined with data.")
   }
@@ -122,61 +123,54 @@ read_spss <- function(file) {
 }
 
 read_rdata <- function(file) {
+  # Use an empty environment when loading Rda/Rdata.
+  # (Don't want objects attached in current env.)
+  env <- new.env(parent = emptyenv())
+  load(file, envir = env)
 
-  # Create an empty environment to load the rdata
-  data <- new.env(parent = emptyenv())
-  load(file, envir = data)
-  data <- as.list(data)
-
-  # Return first element if only one exists
-  if (length(data) == 1L) data <- data[[1]]
+  # write_data only allows 1 object per rdata file,
+  # save has no such restrictions.
+  data <- as.list(env)
+  if (length(data) == 1L) {
+    data <- data[[1L]]
+  } else {
+    warning("Multiple objects stored in file. Returning list.")
+  }
 
   data
 
 }
 
-read_flat <- function(file, delim, encoding, dots) {
-  # readr expects a locale
-  dec <- if (delim != ";") "." else ","
-  loc <- readr::locale(encoding = encoding, decimal_mark = dec)
-
-  # Update standard args
-  args <- list(file = file, delim = delim, locale = loc)
-  if (!is.null(dots)) {
-    name <- setdiff(names(dots), names(args))
-    args <- append(dots[name], args)
-  }
-
-  # Read the data
-  do.call(readr::read_delim, args)
-
+read_flat <- function(file, delim, encoding, ...) {
+  loc <- readr::locale(encoding = encoding, decimal_mark = if (delim != ";") "." else ",")
+  readr::read_delim(file, delim, locale = loc, ...)
 }
 
-read_xlsx <- function(file, dots) {
-
-  # Get the sheetnames to be read
+read_xlsx <- function(file, sheet, ...) {
+  # Read requested sheets (or all if none are specified.)
   wb <- readxl::excel_sheets(file)
-
-  if (!is.null(dots) && "sheet" %in% names(dots)) {
-    sheet <- dots$sheet
+  if (!is.null(sheet)) {
     if (is.character(sheet)) {
-      sheet <- wb[tolower(wb) %in% tolower(sheet)]
-    } else if (is.numeric(sheet) || is.integer(sheet)) {
-      sheet <- wb[sheet]
+      sheets <- wb[tolower(wb) %in% tolower(sheet)]
+    } else if (is.numeric(sheet)) {
+      sheets <- wb[sheet]
     }
-    dots <- dots[!names(dots) %in% "sheet"]
   } else {
-    sheet <- wb
+    sheets <- wb
   }
 
-  # Read data to list
-  data <- lapply(sheet, function(x) {
-    a <- list(path = file, sheet = x); a <- append(a, dots)
-    x <- try(do.call(readxl::read_excel, a), silent = TRUE)
-    if (inherits(x, "try-error")) data.frame() else x })
+  # Read using try. Print errors.
+  data <- lapply(sheets, function(s) {
+    x <- try(readxl::read_excel(file, sheet = s, col_names = TRUE, ...), silent = TRUE)
+    if (inherits(x, "try-error")) {
+      warning("Failed to read '", s, "'. Returning empty data.frame.")
+      data.frame()
+    } else {
+      x
+    }
+  })
 
-  # Set names
-  names(data) <- sheet
+  names(data) <- sheets
 
   # If only one sheet was read, return a data.frame instead
   if (length(data) == 1L) data <- data[[1]]

@@ -27,7 +27,7 @@ write_clipboard <- function(x, ...) {
     file <- pipe("pbcopy", "w")
     on.exit(close(file), add = TRUE)
   } else {
-    stop("Writing to clipboard is supported only in Windows or OSX")
+    stop("Writing to clipboard is supported only in Windows and OSX")
   }
 
   if (is.character(x)) {
@@ -59,8 +59,7 @@ to_clipboard <- write_clipboard
 #' and the encoding is always \code{UTF-8}. For xlsx, the function uses
 #' \code{\link{to_excel}} (which in turn uses \pkg{openxlsx}).
 #'
-#' @param x The data to be written. (\code{data.frame}, \code{list} or
-#' \code{\link[reporttoolDT]{Survey}}).
+#' @param x The data to be written. (\code{data.frame} or \code{list}.
 #' \code{matrix} and \code{table} will be coerced to a \code{data.frame}.
 #' @param file Path and filename of output.
 #' @param ... Further arguments passed to \pkg{readr}, \pkg{openxlsx} or \pkg{haven}.
@@ -82,25 +81,16 @@ write_data <- function(x, file, ..., delim = NULL) {
 #' @rdname write_data
 #' @export
 write_data.data.frame <- function(x, file, ..., delim = NULL) {
-  dots <- list(...)
   ext <- tolower(tools::file_ext(file))
-
-  # Excel/Rdata writer expects a named list as input
-  if ("sheet" %in% names(dots)) {
-    name <- dots$sheet
-  } else {
-    name <- basename_sans_ext(file)
-  }
-
   switch(ext,
-         rdata = write_rdata(setNames(list(x), name), file),
-         rda = write_rdata(setNames(list(x), name), file),
-         xlsx = write_xlsx(setNames(list(x), name), file, dots),
-         sav = write_spss(x, file),
-         txt = write_flat(x, file, delim = delim %||% "\t", dots),
-         tsv = write_flat(x, file, delim = delim %||% "\t", dots),
-         csv = write_flat(x, file, delim = delim %||% ",", dots),
-         stop("Unrecognized output format: ", ext))
+         rdata = write_rdata(x, file, ...),
+         rda = write_rdata(x, file, ...),
+         xlsx = write_xlsx(x, file, ...),
+         sav = write_spss(x, file, ...),
+         txt = write_flat(x, file, delim = delim %||% "\t", ...),
+         tsv = write_flat(x, file, delim = delim %||% "\t", ...),
+         csv = write_flat(x, file, delim = delim %||% ",", ...),
+         stop("Unrecognized output format (for data.frame): ", ext))
 
   # Suppress printing
   invisible()
@@ -109,31 +99,12 @@ write_data.data.frame <- function(x, file, ..., delim = NULL) {
 #' @rdname write_data
 #' @export
 write_data.list <- function(x, file, ...) {
-  dots <- list(...)
   ext <- tolower(tools::file_ext(file))
-  if (!ext %in% c("xlsx", "rdata")) {
-    stop("Lists can only be written to .xlsx or .Rdata files.")
-  }
-
-  # All list elements must be named
-  unnamed <- is.null(names(x)) || any(names(x) == "")
-  dupes <- duplicated(names(x))
-  if (unnamed) {
-    stop("All list elements must be named.")
-  } else if (any(dupes)) {
-    stop("List names should not contain duplicates.")
-  }
-
-  # The list should only contain data.frame/matrix
-  is_df <- vapply(x, is.data.frame, logical(1))
-  if (!all(is_df)) {
-    is_matrix <- vapply(x, is.matrix, logical(1))
-    if (!all(is_df | is_matrix)) {
-      stop("All list items must be a data.frame or matrix.")
-    }
-  }
-
-  switch(ext, rdata = write_rdata(x, file), xlsx = write_xlsx(x, file, dots))
+  switch(ext,
+         rdata = write_rdata(x, file, ...),
+         rda = write_rdata(x, file, ...),
+         xlsx = write_xlsx(x, file, ...),
+         stop("Unrecognized output format (for list): ", ext))
 
   # Suppress printing
   invisible()
@@ -147,12 +118,6 @@ write_data.matrix <- function(x, file, ...) {
 #' @export
 write_data.table <- write_data.matrix
 
-#' @export
-write_data.character <- function(x, file, ...) {
-  # Use readr by default? Encoding?
-  stop("Work in progress. Not ready yet.")
-}
-
 #' @rdname write_data
 #' @export
 write_data.ggplot <- function(x, file, ...) {
@@ -164,7 +129,7 @@ write_data.ggplot <- function(x, file, ...) {
 
 # Output wrappers --------------------------------------------------------------
 
-write_spss <- function(data, file) {
+write_spss <- function(data, file, ...) {
   if (!any_labelled(data)) warning("No labelled variables found in data.")
 
   # WORKAROUND: Haven/ReadStat cannot write strings that exceed 256 characters.
@@ -176,15 +141,15 @@ write_spss <- function(data, file) {
       max(nchar(x, keepNA = TRUE), na.rm = TRUE) > 250  } , logical(1))
 
     if (any(is_long)) {
-      columns <- names(data)[is_long]
       name <- basename_sans_ext(file)
       spath <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
       # We need an ID to match against when reading in again.
+      columns <- names(data)[is_long]
       data$string_id <- 1:nrow(data)
 
       # Write the full-length strings separately and truncate in original data
-      write_rdata(list("x" = data[c(columns, "string_id")]), spath)
+      write_rdata(data[c(columns, "string_id")], spath)
       data[columns] <- lapply(data[columns], function(x) {
         oa = attributes(x); x <- substr(x, 1L, 250L); attributes(x) <- oa; x
         })
@@ -193,50 +158,40 @@ write_spss <- function(data, file) {
 
   }
 
-  haven::write_sav(data, path = file)
+  haven::write_sav(data, path = file, ...)
 
 }
 
-write_rdata <- function(data, file) {
-  save(list = names(data), file = file, envir = list2env(data, parent = emptyenv()))
+write_rdata <- function(data, file, ...) {
+  save(data, file = file, ...)
 }
 
-write_flat <- function(data, file, delim, dots) {
+write_flat <- function(data, file, delim, ...) {
+  readr::write_delim(data, file, delim = delim, ...)
+}
 
-  # Update default args.
-  args <- list(x = data, path = file, delim = delim)
-  if (!is.null(dots)) {
-    name <- setdiff(names(dots), names(args))
-    args <- append(dots[name], args)
+write_xlsx <- function(data, file, ...) {
+  # to_excel expects a named list.
+  if (!is_list(data)) {
+    data <- setNames(list(data), basename_sans_ext(file))
+  } else {
+    if (!is_named(data))
+      stop("All elements must be named when writing a list to excel.")
+    if (any(duplicated(names(data))))
+      stop("Lists cannot contain duplicated names when writing to excel.")
   }
 
-  do.call(readr::write_delim, args)
-
-}
-
-write_xlsx <- function(data, file, dots) {
-  # Load workbook if it already exists. Create if not.
+  # Load existing workbook, or create new.
   if (file.exists(file)) {
     wb <- openxlsx::loadWorkbook(file)
   } else {
     wb <- openxlsx::createWorkbook()
   }
 
-  # Update default args. User should use to_excel if they want to
-  # change these defaults.
-  args <- list(title = NULL, format = FALSE, row = 1L, append = FALSE)
-  if (!is.null(dots)) {
-    name <- setdiff(names(dots), c(names(args), "sheet"))
-    args <- append(dots[name], args)
+  # Add data to wb and write.
+  for (sheet in names(data)) {
+    to_excel(data[[sheet]], wb, sheet = sheet, title = NULL, format = FALSE, append = FALSE)
   }
-
-  # openxlsx Workbooks are mutable, so we don't have to assign results.
-  lapply(names(data), function(name) {
-    file_arg <- list(df = data[[name]], wb = wb, sheet = name)
-    all_args <- append(file_arg, args)
-    do.call(to_excel, all_args)
-    })
-
   openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
 
 }
