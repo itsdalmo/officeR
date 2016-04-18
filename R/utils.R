@@ -1,3 +1,5 @@
+#
+
 # Convert http links into a sharepoint link on windows -------------------------
 as_network_drive <- function(link) {
   if (!on_windows()) {
@@ -66,6 +68,11 @@ is_string <- function(x) {
 # See if a list or data.frame contains any labelled vectors. -------------------
 any_labelled <- function(x) {
   any(vapply(x, inherits, what = "labelled", logical(1)))
+}
+
+# Check if an object is named (not NULL, "" or NA) -----------------------------
+is_named <- function(x) {
+  !is.null(names(x)) && !any(names(x) == "")
 }
 
 # Like is.list, except it does not return true for data.frame ------------------
