@@ -7,13 +7,15 @@
 \usage{
 read_data(file, ...)
 
-\method{read_data}{default}(file, ..., delim = NULL, encoding = "UTF-8")
+\method{read_data}{default}(file, ..., sheet = NULL, delim = NULL,
+  encoding = "UTF-8")
 }
 \arguments{
 \item{file}{Path to a file with a supported extension.}
 
-\item{...}{Additional arguments passed to \pkg{readxl} and \pkg{readr}. For
-instance you can use \code{sheet} to specify a xlsx sheet when reading.}
+\item{...}{Additional arguments passed to underlying functions.}
+
+\item{sheet}{Specify one or more sheets when reading excel files.}
 
 \item{delim}{The deliminator used for flat files.}
 

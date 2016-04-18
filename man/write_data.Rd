@@ -16,8 +16,7 @@ write_data(x, file, ..., delim = NULL)
 \method{write_data}{ggplot}(x, file, ...)
 }
 \arguments{
-\item{x}{The data to be written. (\code{data.frame}, \code{list} or
-\code{\link[reporttoolDT]{Survey}}).
+\item{x}{The data to be written. (\code{data.frame} or \code{list}.
 \code{matrix} and \code{table} will be coerced to a \code{data.frame}.}
 
 \item{file}{Path and filename of output.}

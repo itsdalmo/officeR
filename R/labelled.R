@@ -51,7 +51,7 @@ from_labelled.data.table <- function(df) {
 #' Reverses the process from \code{\link{from_labelled}}, by attempting to create
 #' labelled variables in place of \code{\link[base]{factor}}, and adding labels to each variable.
 #'
-#' @param x A data.frame, or \code{\link[reporttoolDT]{Survey}}.
+#' @param x A data.frame.
 #' @author Kristian D. Olsen
 #' @note Because of a limitation in \pkg{ReadStat} (it can't write strings longer
 #' than 256 characters), \code{\link{write_data}} will write the long strings as
