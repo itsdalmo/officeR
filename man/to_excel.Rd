@@ -8,7 +8,7 @@
 \usage{
 to_excel(df, wb, ...)
 
-excel_workbook()
+excel_workbook(template = NULL)
 
 \method{to_excel}{data.frame}(df, wb, title = " ", sheet = "tables",
   format = !is.null(title), append = TRUE, row = 1L, col = 1L, ...)
@@ -19,6 +19,9 @@ excel_workbook()
 \item{wb}{A \code{Workbook}.}
 
 \item{...}{Arguments passed to \code{to_excel.data.frame} (See below).}
+
+\item{template}{Optional: Specify a path if you would like to append data to
+an existing .xlsx file. Default creates a new workbook.}
 
 \item{title}{The title to give to the table. Must be \code{NULL} if you do not
 want the table to be formatted.}

@@ -13,8 +13,9 @@
 #' @param wb A \code{pptWorkbook}.
 #' @param title Title to use for the new slide.
 #' @param subtitle Subtitle.
-#' @param template Path to a powerpoint template. Default is the template provided
-#' in this package.
+#' @param template Optional: Specify a path if you would like to append slides to
+#' an existing powerpoint file (use it as a template). Default uses the template
+#' included in this package.
 #' @param font Default font (Replaces the \code{ReporteRs-default-font} option).
 #' @param fontsize Default fontsize (Replaces the \code{ReporteRs-fontsize} option).
 #' @author Kristian D. Olsen

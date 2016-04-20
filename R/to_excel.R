@@ -16,6 +16,8 @@
 #' sheet before writing.
 #' @param row Specify the startingrow when writing data to a new sheet.
 #' @param col Start column. Same as for row.
+#' @param template Optional: Specify a path if you would like to append data to
+#' an existing .xlsx file. Default creates a new workbook.
 #' @author Kristian D. Olsen
 #' @note This function requires \pkg{openxlsx}.
 #' @export
@@ -45,8 +47,14 @@ to_excel <- function(df, wb, ...) {
 
 #' @rdname to_excel
 #' @export
-excel_workbook <- function() {
-  openxlsx::createWorkbook()
+excel_workbook <- function(template = NULL) {
+  if (is.null(template)) {
+    openxlsx::createWorkbook()
+  } else {
+    if (!is_string(template) || tools::file_ext(template) != "xlsx")
+      stop("Argument 'template' should be NULL or a path to a .xlsx file.")
+    openxlsx::loadWorkbook(clean_path(template))
+  }
 }
 
 #' @export

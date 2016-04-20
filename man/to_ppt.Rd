@@ -30,8 +30,9 @@ ppt_workbook(template = NULL, font = "Calibri", fontsize = 10L)
 
 \item{subtitle}{Subtitle.}
 
-\item{template}{Path to a powerpoint template. Default is the template provided
-in this package.}
+\item{template}{Optional: Specify a path if you would like to append slides to
+an existing powerpoint file (use it as a template). Default uses the template
+included in this package.}
 
 \item{font}{Default font (Replaces the \code{ReporteRs-default-font} option).}
 
