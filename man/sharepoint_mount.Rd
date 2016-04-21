@@ -2,6 +2,7 @@
 % Please edit documentation in R/sharepoint.R
 \name{sharepoint_mount}
 \alias{read_data.sharepoint_link}
+\alias{read_data.sharepoint_mount}
 \alias{sharepoint_link}
 \alias{sharepoint_mount}
 \title{Prepare a sharepoint link for reading}
@@ -11,6 +12,8 @@ sharepoint_mount(link)
 sharepoint_link(link)
 
 \method{read_data}{sharepoint_link}(file, destination = NULL, ...)
+
+\method{read_data}{sharepoint_mount}(file, ...)
 }
 \arguments{
 \item{link}{A string starting with \code{http}.}

@@ -74,7 +74,7 @@ read_data.sharepoint_link <- function(file, destination = NULL, ...) {
 
 }
 
-#' @rdname sharepoint_link
+#' @rdname sharepoint_mount
 #' @export
 read_data.sharepoint_mount <- function(file, ...) {
   NextMethod()
