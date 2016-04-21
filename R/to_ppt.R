@@ -62,7 +62,7 @@ write_data.pptWorkbook <- function(x, file, ...) {
   if (!requireNamespace("ReporteRs")) {
     stop("'ReporteRs' required to write pptWorkbook.")
   }
-  ReporteRs::writeDoc(x$obj, file = file)
+  ReporteRs::writeDoc(x$obj, file = file, ...)
 }
 
 #' @rdname to_ppt

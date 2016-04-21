@@ -12,7 +12,8 @@ read_data(file, ...)
 \arguments{
 \item{file}{Path to a file with a supported extension.}
 
-\item{...}{Additional arguments passed to underlying functions.}
+\item{...}{Additional arguments passed to underlying functions.
+(Currently, \code{\link[readr]{read_delim}} and \code{\link[readxl]{read_excel}}.)}
 
 \item{sheet}{Specify one or more sheets when reading excel files.}
 

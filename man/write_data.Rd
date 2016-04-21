@@ -21,7 +21,9 @@ write_data(x, file, ..., delim = NULL)
 
 \item{file}{Path and filename of output.}
 
-\item{...}{Further arguments passed to \pkg{readr}, \pkg{openxlsx} or \pkg{haven}.}
+\item{...}{Further arguments passed to underlying functions.
+(Currently: \code{\link[base]{save}}, \code{\link[openxlsx]{saveWorkbook}},
+\code{\link[ggplot2]{ggsave}}, \code{\link[readr]{write_delim}} and \code{\link[haven]{write_sav}}.)}
 
 \item{delim}{The delimiter to use when writing flat files.}
 }

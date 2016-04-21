@@ -62,7 +62,9 @@ to_clipboard <- write_clipboard
 #' @param x The data to be written. (\code{data.frame} or \code{list}.
 #' \code{matrix} and \code{table} will be coerced to a \code{data.frame}.
 #' @param file Path and filename of output.
-#' @param ... Further arguments passed to \pkg{readr}, \pkg{openxlsx} or \pkg{haven}.
+#' @param ... Further arguments passed to underlying functions.
+#' (Currently: \code{\link[base]{save}}, \code{\link[openxlsx]{saveWorkbook}},
+#' \code{\link[ggplot2]{ggsave}}, \code{\link[readr]{write_delim}} and \code{\link[haven]{write_sav}}.)
 #' @param delim The delimiter to use when writing flat files.
 #' @author Kristian D. Olsen
 #' @note Use \code{lapply} to write a list of data to flat files (csv, txt etc).
@@ -192,6 +194,6 @@ write_xlsx <- function(data, file, ...) {
   for (sheet in names(data)) {
     to_excel(data[[sheet]], wb, sheet = sheet, title = NULL, format = FALSE, append = FALSE)
   }
-  openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
+  openxlsx::saveWorkbook(wb, file, ...)
 
 }

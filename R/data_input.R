@@ -63,6 +63,7 @@ from_clipboard <- read_clipboard
 #'
 #' @param file Path to a file with a supported extension.
 #' @param ... Additional arguments passed to underlying functions.
+#' (Currently, \code{\link[readr]{read_delim}} and \code{\link[readxl]{read_excel}}.)
 #' @param sheet Specify one or more sheets when reading excel files.
 #' @param delim The deliminator used for flat files.
 #' @author Kristian D. Olsen
@@ -99,7 +100,7 @@ read_data.default <- function(file, ..., sheet = NULL, delim = NULL) {
 
 # Input wrappers ---------------------------------------------------------------
 
-read_spss <- function(file) {
+read_spss <- function(file, ...) {
   x <- haven::read_sav(file)
 
   # WORKAROUND: See explanation for this under write_spss.
@@ -121,7 +122,7 @@ read_spss <- function(file) {
 
 }
 
-read_rdata <- function(file) {
+read_rdata <- function(file, ...) {
   # Use an empty environment when loading Rda/Rdata.
   # (Don't want objects attached in current env.)
   env <- new.env(parent = emptyenv())
