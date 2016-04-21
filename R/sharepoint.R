@@ -4,8 +4,6 @@
 #' of making it easy to read files from sharepoint using \code{\link{read_data}}.
 #'
 #' @param link A string starting with \code{http}.
-#' @param mounted Set this to \code{TRUE} if you are on windows and have mounted
-#' the sharepoint server as a network drive.
 #' @param file An object returned from \code{sharepoint_link}.
 #' @param destination Optional: When sharepoint is not mounted, files are always
 #' downloaded before being read into R. The file is temporary if you do not set
@@ -20,30 +18,34 @@
 #' \dontrun{
 #' # The gist of it:
 #' read_data(sharepoint_link(your_server))
+#' read_data(sharepoint_mount(your_server))
 #' }
 
-sharepoint_link <- function(link, mounted = FALSE) {
-  if (!is_string(link)) stop("'link' must be a string (character(1).")
-
-  # Use mounted drives if they exist.
-  if (on_windows() && mounted) {
-    link <- as_network_drive(link)
-    link <- structure(link, class = c("sharepoint_mount", class(link)))
-  } else {
-    if (!requireNamespace("httr")) {
-      stop("'httr' is required for reading from sharepoint.")
-    }
-    link <- structure(URLencode(link), class = c("sharepoint", class(link)))
-  }
-  link
+sharepoint_mount <- function(link) {
+  if (!is_string(link))
+    stop("'link' must be a string.")
+  if (!on_windows())
+    stop("Can only create paths to mounts on Windows.")
+  structure(as_network_drive(link), class = c("sharepoint_mount", "character"))
 }
 
-#' @rdname sharepoint_link
+#' @rdname sharepoint_mount
 #' @export
-read_data.sharepoint <- function(file, destination = NULL, ...) {
-  if (!requireNamespace("httr")) {
-    stop("'httr' is required for reading from sharepoint.")
-  }
+sharepoint_link <- function(link) {
+  if (!is_string(link))
+    stop("'link' must be a string.")
+  if (!requireNamespace("httr"))
+    stop("'httr' is required to read sharepoint links.")
+  structure(URLencode(link), class = c("sharepoint_link", "character"))
+}
+
+#' @rdname sharepoint_mount
+#' @export
+read_data.sharepoint_link <- function(file, destination = NULL, ...) {
+  if (!requireNamespace("httr"))
+    stop("'httr' is required to read sharepoint links.")
+  if (tolower(tools::file_ext(file)) == "")
+    stop("Cannot read directories. Sharepoint 2010 does not support REST.")
 
   # Always download the file before reading.
   if (is.null(destination)) {
@@ -61,16 +63,6 @@ read_data.sharepoint <- function(file, destination = NULL, ...) {
     pwd <- readline("Enter username: ")
     httr:::set_envvar("sp_usr", usr, "session")
     httr:::set_envvar("sp_pwd", pwd, "session")
-  }
-
-  # Check SP version
-  sp10 <- httr::modify_url(file, path = "_vti_bin/ListData.svc/")
-  sp10 <- httr::GET(sp10, httr::authenticate(usr, pwd, type = "ntlm"))
-
-  if (httr::status_code(sp10) == 200) {
-    if (tools::file_ext(file) == "") {
-      stop("Cannot read directories. Sharepoint 2010 does not support REST.")
-    }
   }
 
   # GET and check status

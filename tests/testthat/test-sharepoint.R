@@ -7,7 +7,7 @@ test_that("sharepoint_link returns correct class" , {
   sp <- sharepoint_link(lnk)
 
   expect_error(sharepoint_link(c("a", "b")), "must be a string")
-  expect_s3_class(sp, "sharepoint")
+  expect_s3_class(sp, "sharepoint_link")
 
 })
 
@@ -25,6 +25,6 @@ test_that("We can call read_data on sharepoint links" , {
 
 test_that("read_data on sharepoint mounts" , {
   skip_if_not(on_windows())
-  sp <- sharepoint_link(lnk, mounted = TRUE)
+  sp <- sharepoint_mount(lnk)
   expect_error(read_data(sp), "Path does not exist")
 })
