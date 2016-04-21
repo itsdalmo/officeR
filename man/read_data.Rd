@@ -7,8 +7,7 @@
 \usage{
 read_data(file, ...)
 
-\method{read_data}{default}(file, ..., sheet = NULL, delim = NULL,
-  encoding = "UTF-8")
+\method{read_data}{default}(file, ..., sheet = NULL, delim = NULL)
 }
 \arguments{
 \item{file}{Path to a file with a supported extension.}
@@ -18,8 +17,6 @@ read_data(file, ...)
 \item{sheet}{Specify one or more sheets when reading excel files.}
 
 \item{delim}{The deliminator used for flat files.}
-
-\item{encoding}{The current encoding for the file. Defaults to \code{UTF-8}.}
 }
 \value{
 A data.frame. If more than one sheet is read from a xlsx file

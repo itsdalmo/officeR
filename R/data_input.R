@@ -65,7 +65,6 @@ from_clipboard <- read_clipboard
 #' @param ... Additional arguments passed to underlying functions.
 #' @param sheet Specify one or more sheets when reading excel files.
 #' @param delim The deliminator used for flat files.
-#' @param encoding The current encoding for the file. Defaults to \code{UTF-8}.
 #' @author Kristian D. Olsen
 #' @return A data.frame. If more than one sheet is read from a xlsx file
 #' (or you are reading a Rdata file) a list is returned instead.
@@ -81,16 +80,16 @@ read_data <- function(file, ...) UseMethod("read_data")
 
 #' @rdname read_data
 #' @export
-read_data.default <- function(file, ..., sheet = NULL, delim = NULL, encoding = "UTF-8") {
+read_data.default <- function(file, ..., sheet = NULL, delim = NULL) {
   file <- clean_path(file)
   if (!file.exists(file))
     stop("Path does not exist:\n", file)
 
   switch(tolower(tools::file_ext(file)),
          sav = read_spss(file, ...),
-         txt = read_flat(file, delim = delim %||% "\t", encoding, ...),
-         tsv = read_flat(file, delim = delim %||% "\t", encoding, ...),
-         csv = read_flat(file, delim = delim %||% ",", encoding, ...),
+         txt = read_flat(file, delim = delim %||% "\t", ...),
+         tsv = read_flat(file, delim = delim %||% "\t", ...),
+         csv = read_flat(file, delim = delim %||% ",", ...),
          xlsx = read_xlsx(file, sheet, ...),
          xls = read_xlsx(file, sheet, ...),
          rda = read_rdata(file, ...),
@@ -141,8 +140,8 @@ read_rdata <- function(file) {
 
 }
 
-read_flat <- function(file, delim, encoding, ...) {
-  loc <- readr::locale(encoding = encoding, decimal_mark = if (delim != ";") "." else ",")
+read_flat <- function(file, delim, encoding = "UTF-8", decimal = ".", ...) {
+  loc <- readr::locale(encoding = encoding, decimal_mark = if (delim == ",") "." else decimal)
   readr::read_delim(file, delim, locale = loc, ...)
 }
 
