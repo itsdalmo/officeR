@@ -21,3 +21,37 @@ knitr::opts_chunk$set(
 
 
 Tiny toolbox (work in progress) for working with office and R.
+
+## Installation
+
+#### Dependencies ahead of CRAN
+
+- [Haven](https://github.com/hadley/haven) 0.2.0.9000: Fixes crashes when writing strings longer than 256 characters.
+
+```R
+if (!require(devtools)) {
+	install.packages("devtools")
+}
+devtools::install_github("hadley/haven")
+```
+
+#### Install officeR
+
+Development version:
+```R
+devtools::install_github("itsdalmo/officeR")
+```
+
+CRAN:
+```R
+# Not on CRAN yet.
+```
+
+#### Optional: Powerpoint support
+
+- The latest JRE from [Java](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).
+- [ReporteRs](https://github.com/davidgohel/ReporteRs) from CRAN: 
+
+```R
+install.packages("ReporteRs")
+```
