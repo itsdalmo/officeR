@@ -108,13 +108,27 @@ read_spss <- function(file, ...) {
   sfile <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
   if (file.exists(sfile)) {
+    warn <- "Found Rdata with long strings."
     strings <- as.data.frame(read_data(sfile), stringsAsFactors = FALSE)
-    rows <- match(x$string_id, strings$string_id)
-    vars <- intersect(names(strings), names(x))
 
-    x[vars] <- Map(function(s, d) { attr(s, "label") <- attr(d, "label"); s }, strings[rows, vars], x[vars])
-    x$string_id <- NULL # Remove string ID when reading
-    warning("Found Rdata with long strings in same directory. Joined with data.")
+    # Find the "string_id" variable. Used to be "stringID".
+    str_id <- names(strings)[names(strings) %in% c("string_id", "stringID")]
+    if (!length(str_id)) {
+      warn <- paste(warn, "Could not join with data. Rdata does not contain 'string_id' or 'stringID'.")
+    } else if (length(str_id) > 1L) {
+      warn <- paste(warn, "Could not join with data. Rdata contains multiple string identifiers:\n",
+                    paste0("'", str_id, "'", collapse = ","), collapse = " ")
+    } else if (!str_id %in% names(x)) {
+      warn <- paste(warn, "Could not join with data. The SPSS file does not contain:\n",
+                    paste0("'", str_id, "'"), collapse = " ")
+    } else {
+      warn <- paste(warn, "Joined with data.")
+      rows <- match(x[[str_id]], strings[[str_id]])
+      vars <- intersect(names(strings), names(x))
+      x[vars] <- Map(function(s, d) { attr(s, "label") <- attr(d, "label"); s }, strings[rows, vars], x[vars])
+      x[[str_id]] <- NULL # Remove string ID when reading
+    }
+    warning(warn)
   }
 
   # Return
