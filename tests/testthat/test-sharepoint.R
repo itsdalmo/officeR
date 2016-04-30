@@ -23,6 +23,11 @@ test_that("We can call read_data on sharepoint links" , {
   expect_error(read_data(sp), "Couldn't resolve")
 })
 
+test_that("sharepoint mount errors" , {
+  expect_error(sp <- sharepoint_mount("A", "B"))
+  expect_error(sp <- sharepoint_mount(lnk))
+})
+
 test_that("read_data on sharepoint mounts" , {
   skip_if_not(on_windows())
   sp <- sharepoint_mount(lnk)
