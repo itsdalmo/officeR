@@ -25,7 +25,8 @@ test_that("We can call read_data on sharepoint links" , {
 
 test_that("sharepoint mount errors" , {
   expect_error(sp <- sharepoint_mount("A", "B"))
-  expect_error(sp <- sharepoint_mount(lnk))
+  if (!on_windows())
+    expect_error(sp <- sharepoint_mount(lnk))
 })
 
 test_that("read_data on sharepoint mounts" , {
