@@ -73,8 +73,8 @@ to_labelled.data.frame <- function(x) {
   } else {
     # If labels are not an attribute of the data, check variables.
     # (e.g., if you have just read in data and not converted from_labelled yet.)
-    labels <- lapply(df, attr, which = "label")
-    labels <- unlist(lapply(labels, function(x) { if(is.null(x)) NA else x }))
+    labels <- lapply(x, attr, which = "label")
+    labels <- unlist(lapply(labels, function(v) { if(is.null(v)) NA_character_ else v }))
     labels <- setNames(labels, names(x))
   }
 
