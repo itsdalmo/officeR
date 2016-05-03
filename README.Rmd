@@ -16,8 +16,9 @@ knitr::opts_chunk$set(
 
 ## officeR
 
-[![Build Status](https://travis-ci.org/itsdalmo/officeR.svg?branch=master)](https://travis-ci.org/itsdalmo/officeR)
-[![codecov.io](http://codecov.io/github/itsdalmo/officeR/coverage.svg?branch=master)](http://codecov.io/github/itsdalmo/officeR?branch=master)
+[![Linux/OSX](https://travis-ci.org/itsdalmo/officeR.svg?branch=master)](https://travis-ci.org/itsdalmo/officeR)
+[![Windows](https://ci.appveyor.com/api/projects/status/github/itsdalmo/officeR?branch=master&svg=true)](https://ci.appveyor.com/project/itsdalmo/officeR)
+[![Coverage](http://codecov.io/github/itsdalmo/officeR/coverage.svg?branch=master)](http://codecov.io/github/itsdalmo/officeR?branch=master)
 
 
 officeR is meant to provide a more seamless experience when working with MS Office and R. The toolbox mostly consists of 
