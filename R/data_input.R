@@ -125,7 +125,9 @@ read_spss <- function(file, ...) {
       warn <- paste(warn, "Joined with data.")
       rows <- match(x[[str_id]], strings[[str_id]])
       vars <- intersect(names(strings), names(x))
-      x[vars] <- Map(function(s, d) { attr(s, "label") <- attr(d, "label"); s }, strings[rows, vars], x[vars])
+      x[vars] <- Map(function(s, d) {
+        attr(s, "label") <- attr(d, "label", exact = TRUE); s
+        }, strings[rows, vars], x[vars])
       x[[str_id]] <- NULL # Remove string ID when reading
     }
     warning(warn)

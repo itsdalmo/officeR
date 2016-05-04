@@ -19,7 +19,7 @@ from_labelled <- function(df) UseMethod("from_labelled")
 #' @export
 from_labelled.data.frame <- function(df) {
   # Store variable label
-  label <- lapply(df, attr, which = "label")
+  label <- lapply(df, attr, which = "label", exact = TRUE)
   label <- unlist(lapply(label, function(x) { if(is.null(x)) NA else x }))
 
   # Convert all labelled variables to factor
@@ -72,7 +72,7 @@ to_labelled.data.frame <- function(x) {
   }
 
   # Return early if labels are not an attr of the data
-  labels <- attr(x, "labels")
+  labels <- attr(x, "labels", exact = TRUE)
   if (is.null(labels)) return(x)
 
   # Assign label to the appropriate variable (against a baseline of NA)
