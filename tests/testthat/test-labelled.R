@@ -28,7 +28,7 @@ test_that("Convert to labelled, i/o, and convert back" , {
 
 test_that("Convert to_labelled without calling from_labelled first", {
   res <- to_labelled(org)
-  expect_identical(as.character(lapply(res, attr, "label")), rep(NA_character_, 4))
+  expect_identical(unlist(lapply(res, attr, "label")), NULL)
 })
 
 test_that("data.table works with from/to_labelled", {

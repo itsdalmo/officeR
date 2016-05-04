@@ -30,7 +30,7 @@ from_labelled.data.frame <- function(df) {
 
   # Strip labels from variables, and set them as an attribute of data.
   df[] <- lapply(df, strip_label)
-  attr(df, "labels") <- label
+  attr(df, "labels") <- setNames(label, names(df))
   df
 }
 
@@ -65,28 +65,24 @@ to_labelled <- function(x) UseMethod("to_labelled")
 #' @rdname to_labelled
 #' @export
 to_labelled.data.frame <- function(x) {
-  labels <- attr(x, "labels")
-  if (!is.null(labels)) {
-    # Assign label to the appropriate variable (against a baseline of NA)
-    labels <- c(setNames(rep(NA, length(names(x))), names(x)), labels)
-    labels <- labels[!duplicated(names(labels), fromLast = TRUE)]
-  } else {
-    # If labels are not an attribute of the data, check variables.
-    # (e.g., if you have just read in data and not converted from_labelled yet.)
-    labels <- lapply(x, attr, which = "label")
-    labels <- unlist(lapply(labels, function(v) { if(is.null(v)) NA_character_ else v }))
-    labels <- setNames(labels, names(x))
-  }
-
   # Convert all factors to labelled.
   is_factor <- vapply(x, is.factor, logical(1))
   if (any(is_factor)) {
     x[is_factor] <- lapply(x[is_factor], as_labelled)
   }
 
+  # Return early if labels are not an attr of the data
+  labels <- attr(x, "labels")
+  if (is.null(labels)) return(x)
+
+  # Assign label to the appropriate variable (against a baseline of NA)
+  labels <- c(setNames(rep(NA, length(names(x))), names(x)), labels)
+  labels <- labels[!duplicated(names(labels), fromLast = TRUE)]
+
   # Strip labels from data, and set them as an attribute of the variables.
   x[] <- Map(function(v, l) {attr(v, "label") <- l; v}, x, labels[names(x)])
   attr(x, "labels") <- NULL
+
   x
 
 }
@@ -108,7 +104,7 @@ as_labelled <- function(x) {
   stopifnot(is.factor(x))
   levels <- levels(x)
   labels <- setNames(as.integer(1:length(levels)), levels)
-  haven::labelled(as.integer(x), labels = labels, is_na = NULL)
+  structure(haven::labelled(as.integer(x), labels = labels, is_na = NULL), label = attr(x, "label"))
 }
 
 # Strip the label attribute from a variable (after reading data with haven) ----
