@@ -129,6 +129,12 @@ to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
 }
 
 #' @export
+to_excel.qtable <- function(df, wb, title, ...) {
+  title <- title %||% attr(df, "title")
+  NextMethod()
+}
+
+#' @export
 to_excel.matrix <- function(df, wb, ...) {
   warning("Coercing ", class(df), " to data.frame.")
   to_excel(as.data.frame(df, stringsAsFactors = FALSE), wb, ...)

@@ -22,9 +22,10 @@ Suggests:
     ggplot2,
     httr,
     testthat,
-    ReporteRs (>= 0.8.6),
     knitr,
-    rmarkdown
+    ReporteRs (>= 0.8.6),
+    rmarkdown,
+    tabulR
 Remotes:
     hadley/haven
 VignetteBuilder: knitr
