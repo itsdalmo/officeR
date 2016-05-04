@@ -24,8 +24,7 @@ Suggests:
     testthat,
     knitr,
     ReporteRs (>= 0.8.6),
-    rmarkdown,
-    tabulR
+    rmarkdown
 Remotes:
     hadley/haven
 VignetteBuilder: knitr
