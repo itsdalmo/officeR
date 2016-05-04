@@ -33,7 +33,7 @@ clean_path <- function(path) {
   if (!is_string(path)) stop("Path must be a string.")
 
   # Normalize if path is not absolute.
-  if (!grepl("^(/|[A-Za-z]:|\\\\|~)", path)) {
+  if (!grepl("^(/|[A-Za-z]:|\\\\|https?|~)", path)) {
     path <- normalizePath(path, winslash = "/", mustWork = FALSE)
   }
 
