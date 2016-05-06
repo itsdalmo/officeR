@@ -147,13 +147,13 @@ write_spss <- function(data, file, ...) {
       spath <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
       # We need an ID to match against when reading in again.
-      columns <- names(data)[is_long]
+      columns <- names(data)[is_character][is_long]
       data$string_id <- 1:nrow(data)
 
       # Write the full-length strings separately and truncate in original data
       write_rdata(data[c(columns, "string_id")], spath)
       data[columns] <- lapply(data[columns], function(x) {
-        oa = attributes(x); x <- substr(x, 1L, 250L); attributes(x) <- oa; x
+        out <- substr(x, 1L, 250L); attr(out, which = "label") <- attr(x, which = "label", exact = TRUE); out
         })
       warning("Detected long strings (> 250) in data. Stored as standalone:\n", spath, call. = FALSE)
     }
