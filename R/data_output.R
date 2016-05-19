@@ -20,7 +20,7 @@ write_clipboard <- function(x, ...) {
   dots <- list(...)
   if (on_windows()) {
     file <- "clipboard-128"
-    if (object.size(x) > 120000) {
+    if (utils::object.size(x) > 120000) {
       stop("The data is too large to write to windows clipboard", call. = FALSE)
     }
   } else if (on_osx()) {
