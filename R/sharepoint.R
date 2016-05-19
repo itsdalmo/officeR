@@ -36,7 +36,7 @@ sharepoint_link <- function(link) {
     stop("'link' must be a string.")
   if (!requireNamespace("httr"))
     stop("'httr' is required to read sharepoint links.")
-  structure(URLencode(link), class = c("sharepoint_link", "character"))
+  structure(utils::URLencode(link), class = c("sharepoint_link", "character"))
 }
 
 #' @rdname sharepoint_mount
