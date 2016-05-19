@@ -9,6 +9,7 @@
 #' \item Read/write to the clipboard on Windows and Os X using \code{\link{from_clipboard}} and \code{\link{to_clipboard}}.
 #' \item Send data or plots to Excel and Powerpoint with \code{\link{to_excel}} and \code{\link{to_ppt}}.
 #' }
+#' @importFrom stats setNames
 #' @author Kristian D. Olsen
 #' @docType package
 #' @name officeR
