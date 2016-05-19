@@ -1,7 +1,7 @@
 Package: officeR
 Type: Package
 Title: Office and R
-Version: 0.1
+Version: 0.1.0.9000
 Date: 2016-03-06
 Authors@R: person("Kristian D.", "Olsen", , "kristian@doingit.no", c("aut", "cre"))
 Description: Tiny toolbox for office and R.
