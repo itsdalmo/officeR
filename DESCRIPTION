@@ -15,7 +15,6 @@ Imports:
     R6,
     readr,
     readxl,
-    tools,
     utils
 Suggests:
     data.table,
