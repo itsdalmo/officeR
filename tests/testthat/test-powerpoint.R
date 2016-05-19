@@ -2,6 +2,7 @@ context("Powerpoint workbooks")
 
 test_that("Create powerpoint workbook" , {
   skip_if_not_installed("ReporteRs")
+
   ppt <- ppt_workbook()
   expect_s3_class(ppt, c("pptWorkbook", "R6"))
 })
@@ -14,6 +15,7 @@ test_that("warning 'deprecated' when using addMarkdown" , {
 })
 
 test_that("Add data to and write Powerpoint workbook" , {
+  skip_on_cran(); skip_on_appveyor()
   skip_if_not_installed("ReporteRs")
   ppt <- ppt_workbook()
   df <- data.frame(A = c("a", "b"), B = c(1, 2), stringsAsFactors = FALSE)
@@ -29,6 +31,7 @@ test_that("Add data to and write Powerpoint workbook" , {
 })
 
 test_that("Add markdown to Powerpoint" , {
+  skip_on_cran(); skip_on_appveyor()
   skip_if_not_installed("ReporteRs")
   ppt <- ppt_workbook()
   rmd <- c("*This is added as markdown.*")
