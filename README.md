@@ -4,23 +4,12 @@ officeR
 
 [![Linux/OSX](https://travis-ci.org/itsdalmo/officeR.svg?branch=master)](https://travis-ci.org/itsdalmo/officeR) [![Windows](https://ci.appveyor.com/api/projects/status/github/itsdalmo/officeR?branch=master&svg=true)](https://ci.appveyor.com/project/itsdalmo/officeR) [![Coverage](http://codecov.io/github/itsdalmo/officeR/coverage.svg?branch=master)](http://codecov.io/github/itsdalmo/officeR?branch=master)
 
-officeR is meant to provide a more seamless experience when working with MS Office and R. The toolbox mostly consists of wrapper-functions that provide a consistent syntax for a few select packages.
+officeR is meant to provide a more seamless experience when using R with MS Office and "other programs". In particular, it is a provides a consistent syntax for reading and writing data to several formats, including the windows/osx clipboards, and sharepoint (read-only) over HTTP.
 
 Note: This is a work in progress.
 
 Installation
 ------------
-
-#### Dependencies ahead of CRAN
-
--   [Haven](https://github.com/hadley/haven) 0.2.0.9000: Fixes crashes when writing strings longer than 256 characters.
-
-``` r
-if (!require(devtools)) {
-    install.packages("devtools")
-}
-devtools::install_github("hadley/haven")
-```
 
 #### Install officeR
 
@@ -36,10 +25,11 @@ CRAN:
 # Not on CRAN yet.
 ```
 
-#### Optional: Powerpoint support
+Optional: Powerpoint support
+----------------------------
 
--   The latest JRE from [Java](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).
--   [ReporteRs](https://github.com/davidgohel/ReporteRs) from CRAN:
+-   First install the latest JRE from [Java](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).
+-   Next, install [ReporteRs](https://github.com/davidgohel/ReporteRs) from CRAN:
 
 ``` r
 install.packages("ReporteRs")
