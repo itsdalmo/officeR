@@ -93,7 +93,7 @@ to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
   if (sheet %in% openxlsx::sheets(wb)) {
     if (append) {
       row <- nrow(openxlsx::read.xlsx(wb, sheet = sheet, colNames = FALSE, skipEmptyRows = FALSE))
-      index$rows <- index$rows + 2L # Space between previous table.
+      index$rows <- index$rows + row + 1L # Space between previous table.
     } else {
       openxlsx::removeWorksheet(wb, sheet)
       openxlsx::addWorksheet(wb, sheetName = sheet)
