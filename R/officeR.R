@@ -1,7 +1,7 @@
 #' officeR: A toolbox for using R with office.
 #'
 #' This package is meant to provide a more seamless experience when using R with
-#' MS Office and "other programs". See links in details for more information.
+#' MS Office and "other programs" in general. See links in details for more information.
 #'
 #' \itemize{
 #' \item Get data in and out of R with \code{\link{read_data}} and \code{\link{write_data}}.
