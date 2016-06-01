@@ -104,7 +104,7 @@ as_labelled <- function(x) {
   stopifnot(is.factor(x))
   levels <- levels(x)
   labels <- setNames(as.integer(1:length(levels)), levels)
-  structure(haven::labelled(as.integer(x), labels = labels, is_na = NULL), label = attr(x, "label"))
+  structure(haven::labelled(as.integer(x), labels = labels), label = attr(x, "label"))
 }
 
 # Strip the label attribute from a variable (after reading data with haven) ----
