@@ -26,9 +26,12 @@ ppt_workbook(template = NULL, font = "Calibri", fontsize = 10L)
 
 \item{wb}{A \code{pptWorkbook}.}
 
-\item{title}{Title to use for the new slide.}
+\item{title}{Title to use for the new slide. Defaults to a single whitespace when
+title is \code{NULL}.}
 
-\item{subtitle}{Subtitle.}
+\item{subtitle}{The subtitle for the slide. When \code{NULL} (the default),
+\code{to_ppt} will use the 'title' attribute of the object, or a single whitespace
+if \code{attr(x, 'title')} returns \code{NULL} as well.}
 
 \item{template}{Optional: Specify a path if you would like to append slides to
 an existing powerpoint file (use it as a template). Default uses the template

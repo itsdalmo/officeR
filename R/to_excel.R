@@ -8,8 +8,9 @@
 #' @param df A \code{data.frame}, \code{table} or \code{matrix}.
 #' @param wb A \code{Workbook}.
 #' @param ... Arguments passed to \code{to_excel.data.frame} (See below).
-#' @param title The title to give to the table. Must be \code{NULL} if you do not
-#' want the table to be formatted.
+#' @param title The title to give to the table. When \code{NULL} (the default),
+#' \code{to_excel} will use the 'title' attribute of the object, or a single whitespace
+#' if \code{attr(x, 'title')} returns \code{NULL} as well.
 #' @param sheet The sheet you want to write the data to.
 #' @param format Format values and apply the default template to the table output.
 #' @param append Whether or not the function should append to or replace the
@@ -36,7 +37,7 @@
 #'  write_data(wb, "Example table.xlsx", overwrite = TRUE)
 #' }
 
-to_excel <- function(df, wb, ...) {
+to_excel <- function(df, wb, title = NULL, ...) {
   if (!inherits(wb, "Workbook")) {
     stop ("'wb' should be a Workbook. See help(to_excel).")
   } else if (!identical(attr(class(wb), "package"), "openxlsx")) {
@@ -68,9 +69,7 @@ write_data.Workbook <- function(x, file, ...) {
 
 #' @rdname to_excel
 #' @export
-to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
-                                format = !is.null(title), append = TRUE,
-                                row = 1L, col = 1L, ...) {
+to_excel.data.frame <- function(df, wb, title = NULL, sheet = "tables", format = TRUE, append = TRUE, row = 1L, col = 1L, ...) {
 
   # Check input
   if (!is_string(sheet)) {
@@ -110,7 +109,8 @@ to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
 
   if (format) {
     # Write title on the first row
-    openxlsx::writeData(wb, sheet, title %||% " ", startRow = index$rows[1], startCol = index$columns[1])
+    title <- title %||% attr(df, "title") %||% " "
+    openxlsx::writeData(wb, sheet, title, startRow = index$rows[1], startCol = index$columns[1])
     index$rows[2] <- index$rows[2] + 1L # +1 for last row written to.
 
     # Titlecase and write data
@@ -129,9 +129,10 @@ to_excel.data.frame <- function(df, wb, title = " ", sheet = "tables",
 }
 
 #' @export
-to_excel.matrix <- function(df, wb, ...) {
+to_excel.matrix <- function(df, wb, title = NULL, ...) {
   warning("Coercing ", class(df), " to data.frame.")
-  to_excel(as.data.frame(df, stringsAsFactors = FALSE), wb, ...)
+  title <- title %||% attr(df, "title")
+  to_excel(as.data.frame(df, stringsAsFactors = FALSE), wb, title, ...)
 }
 
 #' @export

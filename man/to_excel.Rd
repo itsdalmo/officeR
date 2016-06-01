@@ -6,25 +6,26 @@
 \alias{to_excel.data.frame}
 \title{Pass data to Excel workbooks}
 \usage{
-to_excel(df, wb, ...)
+to_excel(df, wb, title = NULL, ...)
 
 excel_workbook(template = NULL)
 
-\method{to_excel}{data.frame}(df, wb, title = " ", sheet = "tables",
-  format = !is.null(title), append = TRUE, row = 1L, col = 1L, ...)
+\method{to_excel}{data.frame}(df, wb, title = NULL, sheet = "tables",
+  format = TRUE, append = TRUE, row = 1L, col = 1L, ...)
 }
 \arguments{
 \item{df}{A \code{data.frame}, \code{table} or \code{matrix}.}
 
 \item{wb}{A \code{Workbook}.}
 
+\item{title}{The title to give to the table. When \code{NULL} (the default),
+\code{to_excel} will use the 'title' attribute of the object, or a single whitespace
+if \code{attr(x, 'title')} returns \code{NULL} as well.}
+
 \item{...}{Arguments passed to \code{to_excel.data.frame} (See below).}
 
 \item{template}{Optional: Specify a path if you would like to append data to
 an existing .xlsx file. Default creates a new workbook.}
-
-\item{title}{The title to give to the table. Must be \code{NULL} if you do not
-want the table to be formatted.}
 
 \item{sheet}{The sheet you want to write the data to.}
 

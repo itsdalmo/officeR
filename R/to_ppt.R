@@ -11,8 +11,11 @@
 #'
 #' @param x A \code{data.frame}, \code{string} or \code{plot}
 #' @param wb A \code{pptWorkbook}.
-#' @param title Title to use for the new slide.
-#' @param subtitle Subtitle.
+#' @param title Title to use for the new slide. Defaults to a single whitespace when
+#' title is \code{NULL}.
+#' @param subtitle The subtitle for the slide. When \code{NULL} (the default),
+#' \code{to_ppt} will use the 'title' attribute of the object, or a single whitespace
+#' if \code{attr(x, 'title')} returns \code{NULL} as well.
 #' @param template Optional: Specify a path if you would like to append slides to
 #' an existing powerpoint file (use it as a template). Default uses the template
 #' included in this package.
@@ -68,14 +71,16 @@ write_data.pptWorkbook <- function(x, file, ...) {
 #' @rdname to_ppt
 #' @export
 to_ppt.data.frame <- function(x, wb, title = NULL, subtitle = NULL) {
+  subtitle <- subtitle %||% attr(x, "title")
   wb$add_table(format_flextable(x), title %||% " ", subtitle %||% " ")
 }
 
 
 #' @export
-to_ppt.matrix <- function(x, wb, ...) {
+to_ppt.matrix <- function(x, wb, title = NULL, subtitle = NULL) {
   warning("Coercing ", class(x), " to data.frame.")
-  to_ppt(as.data.frame(x, stringsAsFactors = FALSE), wb, ...)
+  subtitle <- subtitle %||% attr(x, "title")
+  to_ppt(as.data.frame(x, stringsAsFactors = FALSE), wb, title, subtitle)
 }
 
 #' @export
@@ -84,12 +89,14 @@ to_ppt.table <- to_ppt.matrix
 #' @rdname to_ppt
 #' @export
 to_ppt.FlexTable <- function(x, wb, title = NULL, subtitle = NULL) {
+  subtitle <- subtitle %||% attr(x, "title")
   wb$add_table(x, title %||% " ", subtitle %||% " ")
 }
 
 #' @rdname to_ppt
 #' @export
 to_ppt.ggplot <- function(x, wb, title = NULL, subtitle = NULL) {
+  subtitle <- subtitle %||% attr(x, "title")
   wb$add_plot(x, title %||% " ", subtitle %||% " ")
 }
 
@@ -100,7 +107,9 @@ to_ppt.recordedplot <- to_ppt.ggplot
 #' @rdname to_ppt
 #' @export
 to_ppt.character <- function(x, wb, title = NULL, subtitle = NULL) {
-  stopifnot(is_string(x))
+  if (!is_string(x))
+    stop("'to_ppt' only supports strings (length 1 character vector).")
+  subtitle <- subtitle %||% attr(x, "title")
   wb$add_markdown(x, title %||% " ", subtitle %||% " ")
 }
 

@@ -51,3 +51,21 @@ test_that("Add data to an existing excel workbook" , {
   unlink(fileName, recursive = TRUE, force = TRUE)
 
 })
+
+test_that("Title can be passed as an attribute" , {
+  ex <- excel_workbook()
+  df <- data.frame(A = c("a", "b"), B = c(1, 2), stringsAsFactors = FALSE)
+  attr(df, "title") <- "Test title"
+  to_excel(df, ex)
+
+  # Write
+  fileName <- file.path(tempdir(), "xlsx.xlsx")
+  write_data(ex, fileName, overwrite = TRUE)
+
+  # Read
+  re <- read_data(fileName)
+  expect_identical(names(re)[1L], "Test title")
+
+  unlink(fileName, recursive = TRUE, force = TRUE)
+
+})
