@@ -168,7 +168,7 @@ test_that("Read and write_data for .sav files", {
   xlsx <- read_data("xlsx.xlsx")
 
   sav$missing[1:2] <- NA # sav recodes NA to ""
-  expect_identical(sav, xlsx)
+  expect_equal(sav, xlsx)
 
   fileName <- file.path(tempdir(), "sav.sav")
   expect_warning(
