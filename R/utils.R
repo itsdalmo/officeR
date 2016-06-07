@@ -65,7 +65,7 @@ is_string <- function(x) {
 
 # See if a list or data.frame contains any labelled vectors. -------------------
 any_labelled <- function(x) {
-  any(vapply(x, inherits, what = "labelled", logical(1)))
+  any(vapply(x, haven::is.labelled, logical(1)))
 }
 
 # Check if an object is named (not NULL, "" or NA) -----------------------------
@@ -81,3 +81,8 @@ is_list <- function(x) {
 # Hadley's %||% ----------------------------------------------------------------
 `%||%` <- function(a, b) if (!is.null(a)) a else b
 
+# Hadley's replace_with --------------------------------------------------------
+replace_with <- function(x, from, to) {
+  matches <- match(x, from)
+  ifelse(is.na(matches), as.character(x), to[matches])
+}
