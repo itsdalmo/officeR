@@ -5,44 +5,68 @@
 #' as an attribute (by the same name) to the data, and converts any \code{labelled}
 #' variables into factors.
 #'
-#' @param df A data.frame as returned from \code{read_data} or
-#' \code{\link[haven]{read_sav}}.
+#' @param x A \code{\link[haven]{labelled}} vector or \code{data.frame} containing it.
 #' @author Kristian D. Olsen
 #' @note \code{\link[data.table]{data.table}} input returns a copy of the \code{data.table}.
 #' @export
 #' @examples
-#' # TODO
+#' vals <- c("Agree", "Neutral", "Disagree", "Don't know")
+#' var <- haven::labelled(c(1, 5), labels = setNames(1:4, vals))
+#'
+#' # Works with just the labelled vector
+#' from_labelled(var)
+#'
+#' # And a data.frame containing labelled vectors
+#' from_labelled(as.data.frame(var))$var
 
-from_labelled <- function(df) UseMethod("from_labelled")
 
-#' @rdname from_labelled
+from_labelled <- function(x) UseMethod("from_labelled")
+
 #' @export
-from_labelled.data.frame <- function(df) {
-  # Store variable label
-  label <- lapply(df, attr, which = "label", exact = TRUE)
-  label <- unlist(lapply(label, function(x) { if(is.null(x)) NA else x }))
-
-  # Convert all labelled variables to factor
-  is_labelled <- vapply(df, inherits, what = "labelled", logical(1))
-  if (any(is_labelled)) {
-    df[is_labelled] <- lapply(df[is_labelled], haven::as_factor, drop_na = FALSE, ordered = FALSE)
-  }
-
-  # Strip labels from variables, and set them as an attribute of data.
-  df[] <- lapply(df, strip_label)
-  attr(df, "labels") <- setNames(label, names(df))
-  df
+from_labelled.default <- function(x) {
+  attr(x, "label") <- NULL
+  x
 }
 
 #' @rdname from_labelled
 #' @export
-from_labelled.data.table <- function(df) {
-  df <- from_labelled(as.data.frame(df))
+from_labelled.labelled <- function(x) {
+  labels <- attr(x, "labels", exact = TRUE)
+  values <- sort(unique(x))
+  levels <- replace_with(values, unname(labels), names(labels))
+
+  # Retain all labels (and retain label order in labelled character vectors) (#172)
+  if (typeof(x) == "character") {
+    levels <- unique(c(names(labels), levels))
+  } else {
+    levels <- c(setNames(values, levels), labels)
+    levels <- unique(names(sort(levels)))
+  }
+
+  x <- replace_with(x, unname(labels), names(labels))
+  factor(x, levels = levels, ordered = FALSE)
+}
+
+#' @rdname from_labelled
+#' @export
+from_labelled.data.frame <- function(x) {
+  label <- lapply(x, attr, which = "label", exact = TRUE)
+  label <- lapply(label, function(lab) if (is.null(lab)) NA else lab)
+  label <- setNames(unlist(label), names(x))
+
+  # Convert, set label attribute and return.
+  x[] <- lapply(x, from_labelled)
+  structure(x, labels = label)
+}
+
+#' @export
+from_labelled.data.table <- function(x) {
+  x <- from_labelled(as.data.frame(x))
   if (!requireNamespace("data.table", quietly = TRUE)) {
     warning("data.table not installed, returning data.frame.")
-    df
+    x
   } else {
-    data.table::as.data.table(df)
+    data.table::as.data.table(x)
   }
 }
 
@@ -51,25 +75,41 @@ from_labelled.data.table <- function(df) {
 #' Reverses the process from \code{\link{from_labelled}}, by attempting to create
 #' labelled variables in place of \code{\link[base]{factor}}, and adding labels to each variable.
 #'
-#' @param x A data.frame.
+#' @param x A \code{factor} or \code{data.frame}.
 #' @author Kristian D. Olsen
 #' @note Because of a limitation in \pkg{ReadStat} (it can't write strings longer
 #' than 256 characters), \code{\link{write_data}} will write the long strings as
 #' a separate .Rdata file. If you use \code{\link{read_data}}, you will get them back.
 #' @export
 #' @examples
-#' # TODO
+#' levs <- c("Agree", "Neutral", "Disagree", "Don't know")
+#' var <- factor(levs[c(1, 3, 4)], levels = levs)
+#'
+#' # Works with just the factor
+#' to_labelled(var)
+#'
+#' # And a data.frame containing labelled vectors
+#' to_labelled(as.data.frame(var))$var
 
 to_labelled <- function(x) UseMethod("to_labelled")
+
+#' @export
+to_labelled.default <- function(x) {
+  structure(x, label = attr(x, "label", exact = TRUE))
+}
+
+#' @rdname to_labelled
+#' @export
+to_labelled.factor <- function(x) {
+  levels <- levels(x)
+  labels <- setNames(as.integer(1:length(levels)), levels)
+  structure(haven::labelled(as.integer(x), labels = labels), label = attr(x, "label", exact = TRUE))
+}
 
 #' @rdname to_labelled
 #' @export
 to_labelled.data.frame <- function(x) {
-  # Convert all factors to labelled.
-  is_factor <- vapply(x, is.factor, logical(1))
-  if (any(is_factor)) {
-    x[is_factor] <- lapply(x[is_factor], as_labelled)
-  }
+  x[] <- lapply(x, to_labelled)
 
   # Return early if labels are not an attr of the data
   labels <- attr(x, "labels", exact = TRUE)
@@ -80,14 +120,12 @@ to_labelled.data.frame <- function(x) {
   labels <- labels[!duplicated(names(labels), fromLast = TRUE)]
 
   # Strip labels from data, and set them as an attribute of the variables.
-  x[] <- Map(function(v, l) {attr(v, "label") <- l; v}, x, labels[names(x)])
+  x[] <- Map(function(var, lab) {attr(var, "label") <- lab; var}, x, labels[names(x)])
   attr(x, "labels") <- NULL
 
   x
-
 }
 
-#' @rdname to_labelled
 #' @export
 to_labelled.data.table <- function(x) {
   df <- to_labelled(as.data.frame(x))
@@ -99,17 +137,3 @@ to_labelled.data.table <- function(x) {
   }
 }
 
-# Convert factors to a (integer based) labelled variable -----------------------
-as_labelled <- function(x) {
-  stopifnot(is.factor(x))
-  levels <- levels(x)
-  labels <- setNames(as.integer(1:length(levels)), levels)
-  structure(haven::labelled(as.integer(x), labels = labels), label = attr(x, "label"))
-}
-
-# Strip the label attribute from a variable (after reading data with haven) ----
-strip_label <- function(x) {
-  stopifnot(is.atomic(x))
-  attr(x, "label") <- NULL
-  x
-}
