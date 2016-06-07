@@ -3,17 +3,17 @@
 \name{to_labelled}
 \alias{to_labelled}
 \alias{to_labelled.data.frame}
-\alias{to_labelled.data.table}
+\alias{to_labelled.factor}
 \title{Convert to labelled}
 \usage{
 to_labelled(x)
 
-\method{to_labelled}{data.frame}(x)
+\method{to_labelled}{factor}(x)
 
-\method{to_labelled}{data.table}(x)
+\method{to_labelled}{data.frame}(x)
 }
 \arguments{
-\item{x}{A data.frame.}
+\item{x}{A \code{factor} or \code{data.frame}.}
 }
 \description{
 Reverses the process from \code{\link{from_labelled}}, by attempting to create
@@ -25,7 +25,14 @@ than 256 characters), \code{\link{write_data}} will write the long strings as
 a separate .Rdata file. If you use \code{\link{read_data}}, you will get them back.
 }
 \examples{
-# TODO
+levs <- c("Agree", "Neutral", "Disagree", "Don't know")
+var <- factor(levs[c(1, 3, 4)], levels = levs)
+
+# Works with just the factor
+to_labelled(var)
+
+# And a data.frame containing labelled vectors
+to_labelled(as.data.frame(var))$var
 }
 \author{
 Kristian D. Olsen

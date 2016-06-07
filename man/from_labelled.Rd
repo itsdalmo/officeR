@@ -3,18 +3,17 @@
 \name{from_labelled}
 \alias{from_labelled}
 \alias{from_labelled.data.frame}
-\alias{from_labelled.data.table}
+\alias{from_labelled.labelled}
 \title{Convert from labelled data}
 \usage{
-from_labelled(df)
+from_labelled(x)
 
-\method{from_labelled}{data.frame}(df)
+\method{from_labelled}{labelled}(x)
 
-\method{from_labelled}{data.table}(df)
+\method{from_labelled}{data.frame}(x)
 }
 \arguments{
-\item{df}{A data.frame as returned from \code{read_data} or
-\code{\link[haven]{read_sav}}.}
+\item{x}{A \code{\link[haven]{labelled}} vector or \code{data.frame} containing it.}
 }
 \description{
 When reading SPSS files with \code{\link{read_data}}, the output contains vectors
@@ -26,7 +25,14 @@ variables into factors.
 \code{\link[data.table]{data.table}} input returns a copy of the \code{data.table}.
 }
 \examples{
-# TODO
+vals <- c("Agree", "Neutral", "Disagree", "Don't know")
+var <- haven::labelled(c(1, 5), labels = setNames(1:4, vals))
+
+# Works with just the labelled vector
+from_labelled(var)
+
+# And a data.frame containing labelled vectors
+from_labelled(as.data.frame(var))$var
 }
 \author{
 Kristian D. Olsen
