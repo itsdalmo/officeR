@@ -1,5 +1,3 @@
-#
-
 # Convert http links into a sharepoint link on windows -------------------------
 as_network_drive <- function(link) {
   if (!on_windows()) {
