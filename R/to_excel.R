@@ -129,14 +129,17 @@ to_excel.data.frame <- function(df, wb, title = NULL, sheet = "tables", format =
 }
 
 #' @export
-to_excel.matrix <- function(df, wb, title = NULL, ...) {
+to_excel.data.table <- function(df, wb, title = NULL, ...) {
   warning("Coercing ", class(df), " to data.frame.")
   title <- title %||% attr(df, "title")
   to_excel(as.data.frame(df, stringsAsFactors = FALSE), wb, title, ...)
 }
 
 #' @export
-to_excel.table <- to_excel.matrix
+to_excel.table <- to_excel.data.table
+
+#' @export
+to_excel.matrix <- to_excel.data.table
 
 # Set column formats in excel --------------------------------------------------
 format_excel_columns <- function(wb, sheet, cell) {

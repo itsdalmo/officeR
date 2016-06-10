@@ -75,16 +75,12 @@ to_ppt.data.frame <- function(x, wb, title = NULL, subtitle = NULL) {
   wb$add_table(format_flextable(x), title %||% " ", subtitle %||% " ")
 }
 
-
 #' @export
-to_ppt.matrix <- function(x, wb, title = NULL, subtitle = NULL) {
+to_ppt.data.table <- function(x, wb, title = NULL, subtitle = NULL) {
   warning("Coercing ", class(x), " to data.frame.")
   subtitle <- subtitle %||% attr(x, "title")
   to_ppt(as.data.frame(x, stringsAsFactors = FALSE), wb, title, subtitle)
 }
-
-#' @export
-to_ppt.table <- to_ppt.matrix
 
 #' @rdname to_ppt
 #' @export
@@ -112,6 +108,12 @@ to_ppt.character <- function(x, wb, title = NULL, subtitle = NULL) {
   subtitle <- subtitle %||% attr(x, "title")
   wb$add_markdown(x, title %||% " ", subtitle %||% " ")
 }
+
+#' @export
+to_ppt.table  <- to_ppt.data.table
+
+#' @export
+to_ppt.matrix <- to_ppt.data.table
 
 #' Add a title slide
 #'
@@ -190,6 +192,17 @@ pptWorkbook <- R6::R6Class("pptWorkbook",
 
 # Create a flextable with the correct theme ------------------------------------
 format_flextable <- function(df) {
+  is_percent <- vapply(df, is_percent, logical(1), USE.NAMES = FALSE)
+  is_numeric <- vapply(df, is.numeric, logical(1), USE.NAMES = FALSE)
+
+  # Format numeric and/or percent columns
+  if (any(is_numeric)) {
+    df[is_numeric & !is_percent] <- lapply(df[is_numeric & !is_percent], sprintf, fmt = "%.2f")
+  }
+  if (any(is_percent)) {
+    df[is_percent] <- lapply(df[is_percent], function(v) sprintf(fmt = "%.0f %%", v*100))
+  }
+
   # Create the flextable
   ft <- ReporteRs::FlexTable(
     data = df,
@@ -204,18 +217,17 @@ format_flextable <- function(df) {
   )
 
   # Center numeric columns
-  num_columns <- which(vapply(df, is.numeric, logical(1), USE.NAMES = FALSE))
   center <- ReporteRs::parProperties(text.align = "center")
-  ft[, num_columns] <- center
-  ft[, num_columns, to = "header"] <- center
+  ft[, which(is_numeric)] <- center
+  ft[, which(is_numeric), to = "header"] <- center
 
   # Color border for the last row
   ft[nrow(df), ] <- ppt_last_row()
 
-  # Set fixed withs (to avoid overdimensioned tables)
-  # (Assumes fixed with for sheets)
-  fw <- rep(9L/ncol(df), ncol(df))
-  ft <- ReporteRs::setFlexTableWidths(ft, fw)
+  # Use columnnames to allocate width for each column.
+  n_char <- nchar(names(df))
+  n_char <- n_char/sum(n_char) * 9L
+  ft <- ReporteRs::setFlexTableWidths(ft, n_char)
 
   # Return
   ft
