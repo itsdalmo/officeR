@@ -13,28 +13,6 @@ test_that("Unlabelled values are retained when converting from labelled", {
 
 })
 
-test_that("Converting labelled character to factor conserves label order", {
-  vals <- c("Agree", "Neutral", "Disagree", "Don't know")
-  labelled <- haven::labelled(vals[c(2, 1, 3)], labels = setNames(vals, vals))
-
-  # Output should be identical to haven
-  expect_identical(
-    as.character(from_labelled(labelled)),
-    as.character(haven::as_factor(labelled))
-  )
-
-  # Levels should be identical to values
-  expect_identical(
-    levels(from_labelled(labelled)),
-    vals
-  )
-
-  # Haven is not
-  expect_false(
-    identical(levels(haven::as_factor(labelled)), vals)
-  )
-})
-
 test_that("Convert to labelled, i/o, and convert back" , {
   sav <- org
   fileName <- file.path(tempdir(), "sav.sav")

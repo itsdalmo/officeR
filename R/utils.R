@@ -80,9 +80,3 @@ is_list <- function(x) {
 
 # Hadley's %||% ----------------------------------------------------------------
 `%||%` <- function(a, b) if (!is.null(a)) a else b
-
-# Hadley's replace_with --------------------------------------------------------
-replace_with <- function(x, from, to) {
-  matches <- match(x, from)
-  ifelse(is.na(matches), as.character(x), to[matches])
-}

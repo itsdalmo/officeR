@@ -31,20 +31,7 @@ from_labelled.default <- function(x) {
 #' @rdname from_labelled
 #' @export
 from_labelled.labelled <- function(x) {
-  labels <- attr(x, "labels", exact = TRUE)
-  values <- sort(unique(x))
-  levels <- replace_with(values, unname(labels), names(labels))
-
-  # Retain all labels (and retain label order in labelled character vectors) (#172)
-  if (typeof(x) == "character") {
-    levels <- unique(c(names(labels), levels))
-  } else {
-    levels <- c(setNames(values, levels), labels)
-    levels <- unique(names(sort(levels)))
-  }
-
-  x <- replace_with(x, unname(labels), names(labels))
-  factor(x, levels = levels, ordered = FALSE)
+  haven::as_factor(x, levels = "default", ordered = FALSE)
 }
 
 #' @rdname from_labelled
@@ -73,9 +60,13 @@ from_labelled.data.table <- function(x) {
 #' Convert to labelled
 #'
 #' Reverses the process from \code{\link{from_labelled}}, by attempting to create
-#' labelled variables in place of \code{\link[base]{factor}}, and adding labels to each variable.
+#' labelled variables in place of \code{\link[base]{factor}}, and adding labels
+#' to each variable.
 #'
 #' @param x A \code{factor} or \code{data.frame}.
+#' @param label Optional: Set a label when converting a vector to
+#' @param ... Ignored.
+#' \code{\link[haven]{labelled}}.
 #' @author Kristian D. Olsen
 #' @note Because of a limitation in \pkg{ReadStat} (it can't write strings longer
 #' than 256 characters), \code{\link{write_data}} will write the long strings as
@@ -91,24 +82,25 @@ from_labelled.data.table <- function(x) {
 #' # And a data.frame containing labelled vectors
 #' to_labelled(as.data.frame(var))$var
 
-to_labelled <- function(x) UseMethod("to_labelled")
+to_labelled <- function(x, label = NULL) UseMethod("to_labelled")
 
 #' @export
-to_labelled.default <- function(x) {
-  structure(x, label = attr(x, "label", exact = TRUE))
+to_labelled.default <- function(x, label = NULL) {
+  structure(x, label = label %||% attr(x, "label", exact = TRUE))
 }
 
 #' @rdname to_labelled
 #' @export
-to_labelled.factor <- function(x) {
+to_labelled.factor <- function(x, label = NULL) {
   levels <- levels(x)
+  label <- label %||% attr(x, "label", exact = TRUE)
   labels <- setNames(as.integer(1:length(levels)), levels)
-  structure(haven::labelled(as.integer(x), labels = labels), label = attr(x, "label", exact = TRUE))
+  structure(haven::labelled(as.integer(x), labels = labels), label = label)
 }
 
 #' @rdname to_labelled
 #' @export
-to_labelled.data.frame <- function(x) {
+to_labelled.data.frame <- function(x, ...) {
   x[] <- lapply(x, to_labelled)
 
   # Return early if labels are not an attr of the data
@@ -127,7 +119,7 @@ to_labelled.data.frame <- function(x) {
 }
 
 #' @export
-to_labelled.data.table <- function(x) {
+to_labelled.data.table <- function(x, ...) {
   df <- to_labelled(as.data.frame(x))
   if (!requireNamespace("data.table", quietly = TRUE)) {
     warning("data.table not installed, returning data.frame.")

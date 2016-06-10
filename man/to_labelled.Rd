@@ -6,18 +6,24 @@
 \alias{to_labelled.factor}
 \title{Convert to labelled}
 \usage{
-to_labelled(x)
+to_labelled(x, label = NULL)
 
-\method{to_labelled}{factor}(x)
+\method{to_labelled}{factor}(x, label = NULL)
 
-\method{to_labelled}{data.frame}(x)
+\method{to_labelled}{data.frame}(x, ...)
 }
 \arguments{
 \item{x}{A \code{factor} or \code{data.frame}.}
+
+\item{label}{Optional: Set a label when converting a vector to}
+
+\item{...}{Ignored.
+\code{\link[haven]{labelled}}.}
 }
 \description{
 Reverses the process from \code{\link{from_labelled}}, by attempting to create
-labelled variables in place of \code{\link[base]{factor}}, and adding labels to each variable.
+labelled variables in place of \code{\link[base]{factor}}, and adding labels
+to each variable.
 }
 \note{
 Because of a limitation in \pkg{ReadStat} (it can't write strings longer
