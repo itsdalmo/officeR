@@ -1,11 +1,11 @@
-Package: officeR
+Package: seamless
 Type: Package
-Title: A toolbox for using R with Office
+Title: A toolbox for seamlessly integrating R
 Version: 0.1.0
 Date: 2016-03-06
 Authors@R: person("Kristian D.", "Olsen", , "kristian@doingit.no", c("aut", "cre"))
-Description: This package is meant to provide a more seamless experience when using
-             R with MS Office and "other programs" in general.
+Description: This package is meant to provide a more "seamless" experience when using
+             R in a workflow with MS Office and other programs in general.
 License: MIT + file LICENSE
 LazyData: TRUE
 Depends:

@@ -1,7 +1,8 @@
-#' officeR: A toolbox for using R with office.
+#' seamless: A toolbox for seamlessly integrating R
 #'
-#' This package is meant to provide a more seamless experience when using R with
-#' MS Office and "other programs" in general. See links in details for more information.
+#' This package is meant to provide a more "seamless" experience when using
+#' R in a workflow with MS Office and other programs in general. See links in
+#' details for more information.
 #'
 #' \itemize{
 #' \item Get data in and out of R with \code{\link{read_data}} and \code{\link{write_data}}.
@@ -9,9 +10,10 @@
 #' \item Read/write to the clipboard on Windows and Os X using \code{\link{from_clipboard}} and \code{\link{to_clipboard}}.
 #' \item Send data or plots to Excel and Powerpoint with \code{\link{to_excel}} and \code{\link{to_ppt}}.
 #' }
+#'
 #' @importFrom stats setNames
 #' @author Kristian D. Olsen
 #' @docType package
-#' @name officeR
+#' @name seamless
 
 NULL

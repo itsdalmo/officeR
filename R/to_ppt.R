@@ -144,7 +144,7 @@ pptWorkbook <- R6::R6Class("pptWorkbook",
       if (!requireNamespace("ReporteRs")) {
         stop("'ReporteRs' required to create a pptWorkbook.")
       }
-      template <- template %||% system.file("ppt", "template.pptx", package = "officeR")
+      template <- template %||% system.file("ppt", "template.pptx", package = "seamless")
       self$obj <- ReporteRs::pptx(template = clean_path(template))
     },
 

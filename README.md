@@ -1,22 +1,22 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-officeR
--------
+seamless
+--------
 
-[![Linux/OSX](https://travis-ci.org/itsdalmo/officeR.svg?branch=master)](https://travis-ci.org/itsdalmo/officeR) [![Windows](https://ci.appveyor.com/api/projects/status/github/itsdalmo/officeR?branch=master&svg=true)](https://ci.appveyor.com/project/itsdalmo/officeR) [![Coverage](http://codecov.io/github/itsdalmo/officeR/coverage.svg?branch=master)](http://codecov.io/github/itsdalmo/officeR?branch=master)
+[![Linux/OSX](https://travis-ci.org/itsdalmo/seamless.svg?branch=master)](https://travis-ci.org/itsdalmo/seamless) [![Windows](https://ci.appveyor.com/api/projects/status/github/itsdalmo/seamless?branch=master&svg=true)](https://ci.appveyor.com/project/itsdalmo/seamless) [![Coverage](http://codecov.io/github/itsdalmo/seamless/coverage.svg?branch=master)](http://codecov.io/github/itsdalmo/seamless?branch=master)
 
-officeR is meant to provide a more seamless experience when using R with MS Office and "other programs". In particular, it is a provides a consistent syntax for reading and writing data to several formats, including the windows/osx clipboards, and sharepoint (read-only) over HTTP.
+This package is meant to provide a more "seamless" experience when using R in a workflow with MS Office and other programs in general. In particular, it is a provides a consistent syntax for reading and writing data to several formats, including the windows/osx clipboards, and sharepoint (read-only) over HTTP.
 
 Note: This is a work in progress.
 
 Installation
 ------------
 
-#### Install officeR
+#### Install seamless
 
 Development version:
 
 ``` r
-devtools::install_github("itsdalmo/officeR")
+devtools::install_github("itsdalmo/seamless")
 ```
 
 CRAN:

@@ -1,4 +1,4 @@
 library(testthat)
-library(officeR)
+library(seamless)
 
-test_check("officeR")
+test_check("seamless")
