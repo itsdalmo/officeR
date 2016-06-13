@@ -35,6 +35,8 @@ Optional: Powerpoint support
 install.packages("ReporteRs")
 ```
 
+Note: If you are using osx and see any errors regarding "JavaVM", start your troubleshooting [here](http://stackoverflow.com/questions/35179151/cannot-load-r-xlsx-package-on-mac-os-10-11).
+
 Usage
 -----
 
