@@ -25,13 +25,18 @@ from_labelled <- function(x) UseMethod("from_labelled")
 #' @export
 from_labelled.default <- function(x) {
   attr(x, "label") <- NULL
+  attr(x, "format.stata") <- NULL
+  attr(x, "format.spss") <- NULL
+  attr(x, "format.sas") <- NULL
   x
 }
 
 #' @rdname from_labelled
 #' @export
 from_labelled.labelled <- function(x) {
-  haven::as_factor(x, levels = "default", ordered = FALSE)
+  x <- haven::as_factor(x, levels = "default", ordered = FALSE)
+  attr(x, "label") <- NULL
+  x
 }
 
 #' @rdname from_labelled
