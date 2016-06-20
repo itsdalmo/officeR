@@ -159,6 +159,11 @@ format_excel_columns <- function(wb, sheet, cell) {
     openxlsx::addStyle(wb, sheet, excel_integer, rows = rows, cols = cols, gridExpand = TRUE, stack = TRUE)
   }
 
+  if (any(cell$format == "date")) {
+    cols <- which(cell$format == "date") + cell$columns[1] - 1L
+    openxlsx::addStyle(wb, sheet, excel_date, rows = rows, cols = cols, gridExpand = TRUE, stack = TRUE)
+  }
+
   if (any(cell$format == "percent")) {
     cols <- which(cell$format == "percent") + cell$columns[1] - 1L
     openxlsx::addStyle(wb, sheet, excel_percent, rows = rows, cols = cols, gridExpand = TRUE, stack = TRUE)
@@ -172,6 +177,7 @@ format_excel_columns <- function(wb, sheet, cell) {
 
 excel_numeric <- openxlsx::createStyle(numFmt = "0.0")
 excel_integer <- openxlsx::createStyle(numFmt = "0")
+excel_date <- openxlsx::createStyle(numFmt = "yyyy-mm-dd")
 excel_percent <- openxlsx::createStyle(numFmt = "0%")
 excel_character <- openxlsx::createStyle(halign = "left")
 
