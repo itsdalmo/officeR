@@ -25,7 +25,5 @@ Suggests:
     knitr,
     ReporteRs (>= 0.8.6),
     rmarkdown
-Remotes:
-    hadley/haven
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

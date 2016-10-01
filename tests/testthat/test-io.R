@@ -37,7 +37,6 @@ test_that("Writing tables to xlsx with to_excel" , {
   # Mutate to match
   names(w_xlsx) <- names(xlsx)
   w_xlsx <- w_xlsx[2:4, ] # Drop title row
-  row.names(w_xlsx) <- 1:3
 
   expect_equal(w_xlsx, xlsx)
 
@@ -184,7 +183,7 @@ test_that("Read and write_data for .sav files", {
 
 })
 
-test_that("ReadStat does not handle long strings", {
+test_that("ReadStat handles long strings", {
   df <- data.frame("A" = paste0(rep(letters, 10), collapse = ""), stringsAsFactors = FALSE)
   fileName <- file.path(tempdir(), "sav.sav")
 
@@ -192,8 +191,8 @@ test_that("ReadStat does not handle long strings", {
 
   # Read and compare
   inp <- haven::read_sav(fileName)
-  expect_true(nchar(inp$A) == 256L) # Dropped 4 letters (long strings)
-  expect_false(identical(df$A, inp$A))
+  expect_true(nchar(inp$A) == 260L)
+  expect_identical(as.character(df$A), as.character(inp$A))
 
   unlink(fileName, recursive = TRUE, force = TRUE)
 
@@ -205,21 +204,15 @@ test_that("read/write_data handles long strings", {
 
   expect_warning(write_data(df, fileName), "No labelled")
 
-  # (long strings) should be there also.
-  long <- file.path(dirname(fileName), "sav (long strings).Rdata")
-  expect_true(file.exists(long))
-
   # Read and compare
-  expect_warning(inp <- read_data(fileName), "Found Rdata with long strings")
+  inp <- read_data(fileName)
+  inp$A <- as.character(inp$A)
   expect_equal(df, as.data.frame(inp))
   expect_identical(inp$A, df$A)
 
-  unlink(c(fileName, long), recursive = TRUE, force = TRUE)
+  unlink(fileName, recursive = TRUE, force = TRUE)
 
 })
-
-# TODO: Test for roundtripping long strings.
-# Should also make a test to know when ReadStat has implemented this feature.
 
 test_that("i/o error handeling", {
 
