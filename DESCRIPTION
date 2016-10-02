@@ -11,11 +11,11 @@ LazyData: TRUE
 Depends:
     R (>= 3.2)
 Imports:
-    haven (>= 0.2.0.9000),
+    haven (>= 1.0.0),
     openxlsx,
     R6,
-    readr,
-    readxl,
+    readr (>= 1.0.0),
+    readxl (>= 0.1.1),
     utils
 Suggests:
     data.table,
