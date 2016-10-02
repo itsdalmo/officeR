@@ -38,7 +38,7 @@ test_that("Writing tables to xlsx with to_excel" , {
   names(w_xlsx) <- names(xlsx)
   w_xlsx <- w_xlsx[2:4, ] # Drop title row
 
-  expect_equal(w_xlsx, xlsx)
+  expect_equivalent(w_xlsx, xlsx)
 
   unlink(fileName, recursive = TRUE, force = TRUE)
 
