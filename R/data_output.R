@@ -133,35 +133,7 @@ write_data.ggplot <- function(x, file, ...) {
 
 write_spss <- function(data, file, ...) {
   if (!any_labelled(data)) warning("No labelled variables found in data.")
-
-  # WORKAROUND: Haven/ReadStat cannot write strings that exceed 256 characters.
-  # read_/write_data works around this by writing columns to a separate .Rdata file,
-  # and truncating the strings itself before attempting to write - to avoid crashes.
-  is_character <- vapply(data, is.character, logical(1))
-  if (any(is_character)) {
-    is_long <- vapply(data[is_character], function(x) {
-      max(nchar(x, keepNA = TRUE), na.rm = TRUE) > 250  } , logical(1))
-
-    if (any(is_long)) {
-      name <- basename_sans_ext(file)
-      spath <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
-
-      # We need an ID to match against when reading in again.
-      columns <- names(data)[is_character][is_long]
-      data$string_id <- 1:nrow(data)
-
-      # Write the full-length strings separately and truncate in original data
-      write_rdata(data[c(columns, "string_id")], spath)
-      data[columns] <- lapply(data[columns], function(x) {
-        out <- substr(x, 1L, 250L); attr(out, which = "label") <- attr(x, which = "label", exact = TRUE); out
-        })
-      warning("Detected long strings (> 250) in data. Stored as standalone:\n", spath, call. = FALSE)
-    }
-
-  }
-
   haven::write_sav(data, path = file, ...)
-
 }
 
 write_rdata <- function(data, file, ...) {

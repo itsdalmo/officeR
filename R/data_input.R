@@ -103,7 +103,9 @@ read_data.default <- function(file, ..., sheet = NULL, delim = NULL) {
 read_spss <- function(file, ...) {
   x <- haven::read_sav(file)
 
-  # WORKAROUND: See explanation for this under write_spss.
+  # WORKAROUND: Haven/ReadStat used to not be able to write strings longer than
+  # 256 characters. This has been fixed now, but we still need to be able to read
+  # data that was written while the workaround was in use. See git history.
   name <- basename_sans_ext(file)
   sfile <- file.path(dirname(file), paste0(name, " (long strings).Rdata"))
 
